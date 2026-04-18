@@ -1,7 +1,7 @@
 #include"windmaker.h"
 
 WindowProcHook* ProcManager::s_prochook = nullptr;
-Renderable* ProcManager::openglManager = nullptr;
+Renderable* ProcManager::apiManager = nullptr;
 WindMaker::WindMaker()
 	:m_width(0),
 	m_height(0),
@@ -30,9 +30,9 @@ LRESULT CALLBACK ProcManager::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_PAINT:
 	{
 		//draw here
-		if (openglManager)
+		if (apiManager)
 		{
-			openglManager->Render();
+			apiManager->Render();
 		}
 		return 0;
 	}

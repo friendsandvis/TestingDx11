@@ -32,9 +32,9 @@ void Win32WindMaker::CreateWind(unsigned width, unsigned height, std::string win
 	m_renderableHeight = static_cast<unsigned int>(clientRect.bottom - clientRect.top);
 
 }
-void Win32WindMaker::RunLoop(Renderable* openglManager)
+void Win32WindMaker::RunLoop(Renderable* apiManager)
 {
-	ProcManager::openglManager = openglManager;
+	ProcManager::apiManager = apiManager;
 
 
 	//using hwnd here instead of null causes window created to be in stuck state

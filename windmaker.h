@@ -8,7 +8,7 @@ class ProcManager
 public:
 
 	static WindowProcHook* s_prochook;
-	static Renderable* openglManager;
+	static Renderable* apiManager;
 	inline static void SetProcHook(WindowProcHook* ahook) { s_prochook = ahook; }
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
@@ -19,7 +19,7 @@ public:
 	WindMaker();
 	~WindMaker();
 	virtual void CreateWind(unsigned width, unsigned height, std::string windowname) = 0;
-	virtual void RunLoop(Renderable* openglManager) = 0;
+	virtual void RunLoop(Renderable* apiManager) = 0;
 	unsigned int GetWidth() { return m_width; }
 	unsigned int GetHeight() { return m_height; }
 	unsigned int GetRenderableWidth() { return m_renderableWidth; }
