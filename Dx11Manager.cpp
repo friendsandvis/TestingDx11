@@ -5,6 +5,7 @@
 //used for selecting hardware adaptor
 //currently set to nvidia
 #define HARDWAREVENDORID 4318
+
 #define USEDEBUGLAYER
 Dx11Manager::Dx11Manager()
 	:m_appManager(nullptr),
