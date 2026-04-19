@@ -1,6 +1,10 @@
 #pragma once
 #include"WindowProcHook.h"
 #include"windmaker.h"
+#include"DX11Common.h"
+#define DXASSERT(EXP)	{HRESULT res = EXP; assert(res == S_OK);}
+using namespace Microsoft::WRL;
+
 class DX11ApplicationManagerBase : public WindowProcHook
 {
 public:

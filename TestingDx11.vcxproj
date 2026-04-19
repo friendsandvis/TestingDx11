@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="Dx11ApplicationManagerBase.h" />
     <ClInclude Include="Dx11Manager.h" />
+    <ClInclude Include="DX11Common.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Win32WindMaker.h" />
     <ClInclude Include="windmaker.h" />

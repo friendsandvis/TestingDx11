@@ -53,5 +53,8 @@
     <ClInclude Include="Dx11ApplicationManagerBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DX11Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
