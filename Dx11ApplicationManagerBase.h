@@ -9,7 +9,7 @@ class DX11ApplicationManagerBase : public WindowProcHook
 {
 public:
 	void Init(WindMaker* window);
-	void InitBase(WindMaker* window);
+	virtual void InitBase(WindMaker* window);
 	//basic necessary initialization of 
 	virtual void Render() = 0;
 	virtual void PreRenderUpdate() {}
@@ -20,6 +20,7 @@ public:
 	{
 		return m_imguiAllowed;
 	}
+	void InitSwapchain(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory1> factory, unsigned width, unsigned height, HWND hwnd);
 	void RenderBase();
 	void ClearBackBuffer(float clearcolour[4], bool ClearDepth = true);
 	DX11ApplicationManagerBase();
@@ -31,4 +32,5 @@ protected:
 	virtual void InitExtras() {}
 	//imgui related
 	bool m_imguiAllowed;
+	ComPtr<IDXGISwapChain> m_swapchain;
 };

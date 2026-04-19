@@ -13,6 +13,7 @@ DX11ApplicationManagerBase::~DX11ApplicationManagerBase()
 
 void DX11ApplicationManagerBase::Init(WindMaker* window)
 {
+	InitBase(window);
 	InitExtras();
 }
 
@@ -27,5 +28,19 @@ void DX11ApplicationManagerBase::ClearBackBuffer(float clearcolour[4], bool Clea
 
 void DX11ApplicationManagerBase::InitBase(WindMaker* window)
 {
-
+}
+void DX11ApplicationManagerBase::InitSwapchain(ComPtr<ID3D11Device> device,ComPtr<IDXGIFactory1> factory, unsigned width, unsigned height, HWND hwnd)
+{
+	DXGI_SWAP_CHAIN_DESC swapchainDesc = {};
+	swapchainDesc.Windowed = TRUE;
+	swapchainDesc.OutputWindow = hwnd;
+	swapchainDesc.BufferCount = BACKBUFFER_COUNT;
+	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapchainDesc.BufferDesc.Width = width;
+	swapchainDesc.BufferDesc.Height = height;
+	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapchainDesc.SampleDesc.Count = 1;
+	swapchainDesc.SampleDesc.Quality = 0;
+	DXASSERT(factory->CreateSwapChain(device.Get(), &swapchainDesc,m_swapchain.GetAddressOf()))
+	
 }

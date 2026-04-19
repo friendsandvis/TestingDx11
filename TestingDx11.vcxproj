@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClearScreenApplication.cpp" />
     <ClCompile Include="Dx11ApplicationManagerBase.cpp" />
     <ClCompile Include="Dx11Manager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="WindowProcHook.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClearScreenApplication.h" />
     <ClInclude Include="Dx11ApplicationManagerBase.h" />
     <ClInclude Include="Dx11Manager.h" />
     <ClInclude Include="DX11Common.h" />
