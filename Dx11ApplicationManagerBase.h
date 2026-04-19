@@ -20,7 +20,7 @@ public:
 	{
 		return m_imguiAllowed;
 	}
-	void InitSwapchain(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory1> factory, unsigned width, unsigned height, HWND hwnd);
+	void InitSwapchain(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory2> factory, unsigned width, unsigned height, HWND hwnd);
 	void RenderBase();
 	void ClearBackBuffer(float clearcolour[4], bool ClearDepth = true);
 	DX11ApplicationManagerBase();

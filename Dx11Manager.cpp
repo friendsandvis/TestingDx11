@@ -12,7 +12,7 @@ Dx11Manager::Dx11Manager()
 	m_window(nullptr)
 {
 	//enum adapters and select NVIDIA hardware adapter by vendor ID
-	DXASSERT(CreateDXGIFactory1(IID_PPV_ARGS(m_dxgiFactory.GetAddressOf())))
+	DXASSERT(CreateDXGIFactory2(0,IID_PPV_ARGS(m_dxgiFactory.GetAddressOf())))
 		//enum adapters
 		EnumAdapters();
 	//select correct adapter

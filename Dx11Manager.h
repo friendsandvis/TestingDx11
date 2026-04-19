@@ -19,7 +19,7 @@ public:
 	DX11ApplicationManagerBase* m_appManager;
 private:
 	WindMaker* m_window;
-	ComPtr<IDXGIFactory1> m_dxgiFactory;
+	ComPtr<IDXGIFactory2> m_dxgiFactory;
 	vector<ComPtr<IDXGIAdapter1>> m_alladapters;
 	UINT m_selectedAdapterIdx;
 	ComPtr<ID3D11Device> m_mainDevice;

@@ -29,7 +29,7 @@ void DX11ApplicationManagerBase::ClearBackBuffer(float clearcolour[4], bool Clea
 void DX11ApplicationManagerBase::InitBase(WindMaker* window)
 {
 }
-void DX11ApplicationManagerBase::InitSwapchain(ComPtr<ID3D11Device> device,ComPtr<IDXGIFactory1> factory, unsigned width, unsigned height, HWND hwnd)
+void DX11ApplicationManagerBase::InitSwapchain(ComPtr<ID3D11Device> device,ComPtr<IDXGIFactory2> factory, unsigned width, unsigned height, HWND hwnd)
 {
 	DXGI_SWAP_CHAIN_DESC swapchainDesc = {};
 	swapchainDesc.Windowed = TRUE;
