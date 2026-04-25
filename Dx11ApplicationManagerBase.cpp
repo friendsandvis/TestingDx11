@@ -11,9 +11,13 @@ DX11ApplicationManagerBase::~DX11ApplicationManagerBase()
 
 }
 
-void DX11ApplicationManagerBase::Init(WindMaker* window)
+void DX11ApplicationManagerBase::Init(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory2> factory, WindMaker* window)
 {
-	InitBase(window);
+	//swapchain init
+	Win32WindMaker* win32Window = dynamic_cast<Win32WindMaker*>(window);
+	assert(win32Window != nullptr);
+	InitSwapchain(device,factory,window->GetWidth(), window->GetHeight(),win32Window->GetHWND());
+	InitBase(device,window);
 	InitExtras();
 }
 
@@ -26,8 +30,9 @@ void DX11ApplicationManagerBase::ClearBackBuffer(float clearcolour[4], bool Clea
 	//to do
 }
 
-void DX11ApplicationManagerBase::InitBase(WindMaker* window)
+void DX11ApplicationManagerBase::InitBase(ComPtr<ID3D11Device> device, WindMaker* window)
 {
+	
 }
 void DX11ApplicationManagerBase::InitSwapchain(ComPtr<ID3D11Device> device,ComPtr<IDXGIFactory2> factory, unsigned width, unsigned height, HWND hwnd)
 {

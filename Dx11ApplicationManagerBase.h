@@ -8,8 +8,8 @@ using namespace Microsoft::WRL;
 class DX11ApplicationManagerBase : public WindowProcHook
 {
 public:
-	void Init(WindMaker* window);
-	virtual void InitBase(WindMaker* window);
+	void Init(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory2> factory,WindMaker* window);
+	virtual void InitBase(ComPtr<ID3D11Device> device,WindMaker* window);
 	//basic necessary initialization of 
 	virtual void Render() = 0;
 	virtual void PreRenderUpdate() {}

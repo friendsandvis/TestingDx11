@@ -39,9 +39,8 @@ void Dx11Manager::Init(WindMaker* window, DX11ApplicationManagerBase* appmanager
 	D3D_FEATURE_LEVEL dx11FeatureLevel_received;
 	DXASSERT(D3D11CreateDevice(m_alladapters[m_selectedAdapterIdx].Get(),D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_UNKNOWN, 0, deviceFlags, dx11FeatureLevels_requested, ARRAYSIZE(dx11FeatureLevels_requested), D3D11_SDK_VERSION,m_mainDevice.GetAddressOf(), &dx11FeatureLevel_received, m_mainDeviceContext.GetAddressOf()))
 	m_appManager = appmanager;
-	Win32WindMaker* win32Window = dynamic_cast<Win32WindMaker*>(m_window);
 	if(m_appManager != nullptr)
-	m_appManager->Init(window);
+	m_appManager->Init(m_mainDevice,m_dxgiFactory,m_window);
 }
 
 void Dx11Manager::Render()

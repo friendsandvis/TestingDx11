@@ -1,6 +1,7 @@
 #include"Win32WindMaker.h"
 #include"Dx11Manager.h"
 #include"DX11ApplicationManagerBase.h"
+#include"ClearScreenApplication.h"
 #define WINWIDTH 1920
 #define WINHEIGHT 1080
 int main()
@@ -9,7 +10,7 @@ int main()
 	winmaker->CreateWind(WINWIDTH, WINHEIGHT, "DX11 Window");
 	Dx11Manager dx11Manager;
 	DX11ApplicationManagerBase* dx11AppManager = nullptr;
-	
+	dx11AppManager = new ClearScreenApplication();
 	WindowProcHook* windhook = dynamic_cast<WindowProcHook*>(dx11AppManager);
 	ProcManager::SetProcHook(windhook);
 	dx11Manager.Init(winmaker, dx11AppManager);
