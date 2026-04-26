@@ -23,6 +23,7 @@ void DX11ApplicationManagerBase::Init(ComPtr<ID3D11Device> device, ComPtr<IDXGIF
 
 void DX11ApplicationManagerBase::RenderBase()
 {
+
 }
 
 void DX11ApplicationManagerBase::ClearBackBuffer(float clearcolour[4], bool ClearDepth)
@@ -36,16 +37,24 @@ void DX11ApplicationManagerBase::InitBase(ComPtr<ID3D11Device> device, WindMaker
 }
 void DX11ApplicationManagerBase::InitSwapchain(ComPtr<ID3D11Device> device,ComPtr<IDXGIFactory2> factory, unsigned width, unsigned height, HWND hwnd)
 {
-	DXGI_SWAP_CHAIN_DESC swapchainDesc = {};
-	swapchainDesc.Windowed = TRUE;
-	swapchainDesc.OutputWindow = hwnd;
-	swapchainDesc.BufferCount = BACKBUFFER_COUNT;
-	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapchainDesc.BufferDesc.Width = width;
-	swapchainDesc.BufferDesc.Height = height;
-	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapchainDesc.SampleDesc.Count = 1;
-	swapchainDesc.SampleDesc.Quality = 0;
-	DXASSERT(factory->CreateSwapChain(device.Get(), &swapchainDesc,m_swapchain.GetAddressOf()))
+	m_swapchain.Init(device, factory, width, height, hwnd);
 	
+}
+D3D11_VIEWPORT DX11ApplicationManagerBase::GetViewport()
+{
+	D3D11_VIEWPORT viewPort = {};
+	viewPort.TopLeftX = 0;
+	viewPort.TopLeftY = 0;
+	viewPort.Width = static_cast<FLOAT>(m_swapchain.GetWidth());
+	viewPort.Height = static_cast<FLOAT>(m_swapchain.GetHeight());
+	return viewPort;
+}
+D3D11_RECT DX11ApplicationManagerBase::GetScissorRect()
+{
+	D3D11_RECT rect;
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = m_swapchain.GetWidth();
+	rect.bottom = m_swapchain.GetHeight();
+	return rect;
 }

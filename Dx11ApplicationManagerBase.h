@@ -2,16 +2,19 @@
 #include"WindowProcHook.h"
 #include"windmaker.h"
 #include"DX11Common.h"
-#define DXASSERT(EXP)	{HRESULT res = EXP; assert(res == S_OK);}
-using namespace Microsoft::WRL;
-
+#include"Dx11Swapchain.h"
+#include"Dx11RenderContext.h"
 class DX11ApplicationManagerBase : public WindowProcHook
 {
 public:
 	void Init(ComPtr<ID3D11Device> device, ComPtr<IDXGIFactory2> factory,WindMaker* window);
 	virtual void InitBase(ComPtr<ID3D11Device> device,WindMaker* window);
+	//returns the default viewport based on the current swapchain properties
+	D3D11_VIEWPORT GetViewport();
+	//returns the default scissor rect based on the current swapchain properties
+	D3D11_RECT GetScissorRect();
 	//basic necessary initialization of 
-	virtual void Render() = 0;
+	virtual void Render(RenderContext context) = 0;
 	virtual void PreRenderUpdate() {}
 	virtual void PostRenderUpdate() {}
 	virtual void Destroy() {}
@@ -32,5 +35,5 @@ protected:
 	virtual void InitExtras() {}
 	//imgui related
 	bool m_imguiAllowed;
-	ComPtr<IDXGISwapChain> m_swapchain;
+	DX11Swapchain m_swapchain;
 };

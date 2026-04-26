@@ -45,10 +45,13 @@ void Dx11Manager::Init(WindMaker* window, DX11ApplicationManagerBase* appmanager
 
 void Dx11Manager::Render()
 {
+	RenderContext renderContext = {};
+	renderContext.m_mainDevice = m_mainDevice;
+	renderContext.m_mainContext = m_mainDeviceContext;
 	if (m_appManager)
 	{
 		m_appManager->PreRenderUpdate();
-		m_appManager->Render();
+		m_appManager->Render(renderContext);
 		m_appManager->PostRenderUpdate();
 	}
 }

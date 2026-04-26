@@ -4,5 +4,5 @@
 class ClearScreenApplication : public DX11ApplicationManagerBase
 {
 public:
-	void Render() override;
+	void Render(RenderContext context) override;
 };

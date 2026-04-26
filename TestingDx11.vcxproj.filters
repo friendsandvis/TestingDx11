@@ -39,6 +39,9 @@
     <ClCompile Include="ClearScreenApplication.cpp">
       <Filter>applications</Filter>
     </ClCompile>
+    <ClCompile Include="Dx11Swapchain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -64,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="ClearScreenApplication.h">
       <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="Dx11Swapchain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dx11RenderContext.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
