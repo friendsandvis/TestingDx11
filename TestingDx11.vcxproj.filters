@@ -42,6 +42,15 @@
     <ClCompile Include="Dx11Swapchain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleTriangleApplication.cpp">
+      <Filter>applications</Filter>
+    </ClCompile>
+    <ClCompile Include="Dx11Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -72,6 +81,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dx11RenderContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTriangleApplication.h">
+      <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="Dx11Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

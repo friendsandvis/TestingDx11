@@ -32,7 +32,7 @@ public:
 protected:
 	//a camera object representing the main camera for a basic application
 
-	virtual void InitExtras() {}
+	virtual void InitExtras(ComPtr<ID3D11Device> device) {}
 	//imgui related
 	bool m_imguiAllowed;
 	DX11Swapchain m_swapchain;

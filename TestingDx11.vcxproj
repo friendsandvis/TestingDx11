@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)includes\dxmath;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -125,9 +128,12 @@
   <ItemGroup>
     <ClCompile Include="ClearScreenApplication.cpp" />
     <ClCompile Include="Dx11ApplicationManagerBase.cpp" />
+    <ClCompile Include="Dx11Buffer.cpp" />
     <ClCompile Include="Dx11Manager.cpp" />
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimpleTriangleApplication.cpp" />
+    <ClCompile Include="VertexData.cpp" />
     <ClCompile Include="Win32WindMaker.cpp" />
     <ClCompile Include="windmaker.cpp" />
     <ClCompile Include="WindowProcHook.cpp" />
@@ -135,11 +141,14 @@
   <ItemGroup>
     <ClInclude Include="ClearScreenApplication.h" />
     <ClInclude Include="Dx11ApplicationManagerBase.h" />
+    <ClInclude Include="Dx11Buffer.h" />
     <ClInclude Include="Dx11Manager.h" />
     <ClInclude Include="DX11Common.h" />
     <ClInclude Include="Dx11RenderContext.h" />
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="SimpleTriangleApplication.h" />
+    <ClInclude Include="VertexData.h" />
     <ClInclude Include="Win32WindMaker.h" />
     <ClInclude Include="windmaker.h" />
     <ClInclude Include="WindowProcHook.h" />

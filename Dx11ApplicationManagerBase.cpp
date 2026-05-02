@@ -18,7 +18,7 @@ void DX11ApplicationManagerBase::Init(ComPtr<ID3D11Device> device, ComPtr<IDXGIF
 	assert(win32Window != nullptr);
 	InitSwapchain(device,factory,window->GetWidth(), window->GetHeight(),win32Window->GetHWND());
 	InitBase(device,window);
-	InitExtras();
+	InitExtras(device);
 }
 
 void DX11ApplicationManagerBase::RenderBase()
