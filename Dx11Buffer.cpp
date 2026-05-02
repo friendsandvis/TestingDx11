@@ -2,5 +2,5 @@
 
 void DX11Buffer::Init(ComPtr<ID3D11Device> device,D3D11_BUFFER_DESC desc, D3D11_SUBRESOURCE_DATA initData)
 {
-	device->CreateBuffer(&desc,&initData, m_buffer.GetAddressOf());
+	DXASSERT(device->CreateBuffer(&desc,&initData, m_buffer.GetAddressOf()))
 }
