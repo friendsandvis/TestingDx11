@@ -35,6 +35,16 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	context.m_mainContext->ClearRenderTargetView(m_swapchain.GetBackBufferRTV().Get(), clearcolour);
 	//----pipeline states
 	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//calculate  add stride and offset based on hardcoded assumption of using VertexVersion0 get from vertexdata used for triangle rendering.
+	UINT v_stride = sizeof(sizeof(VertexV0));
+	UINT v_offset = 0;
+
+	context.m_mainContext->IASetVertexBuffers(0, 1, m_triangle_vertexBuffer.GetDXBuffer().GetAddressOf(),&v_stride, &v_offset);
+	//input layout
+	//raster state
+	// blend state
+	//shader
+	//draw
 	m_swapchain.Present();
 }
 void SimpleTriangleApplication::GetTriangleVertices(std::vector<VertexBase*>& outverticies)
