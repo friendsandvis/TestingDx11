@@ -3,17 +3,22 @@
 #include"DX11ApplicationManagerBase.h"
 #include"ClearScreenApplication.h"
 #include"SimpleTriangleApplication.h"
+#include<iostream>
 #define WINWIDTH 1920
 #define WINHEIGHT 1080
 int main()
 {
-	int appToTest = 1;
+	std::cout << "0.clearscreen.\n";
+	std::cout << "1.triangleApplication.\n";
+	std::cout << "Enter App Number to run:-\n";
+	int appnumber;
+	std::cin >> appnumber;
 	
 	Win32WindMaker* winmaker = new Win32WindMaker();
 	winmaker->CreateWind(WINWIDTH, WINHEIGHT, "DX11 Window");
 	Dx11Manager dx11Manager;
 	DX11ApplicationManagerBase* dx11AppManager = nullptr;
-	switch (appToTest)
+	switch (appnumber)
 	{
 		case 0:
 		{
