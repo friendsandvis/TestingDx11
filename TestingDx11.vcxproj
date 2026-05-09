@@ -130,6 +130,7 @@
     <ClCompile Include="Dx11ApplicationManagerBase.cpp" />
     <ClCompile Include="Dx11Buffer.cpp" />
     <ClCompile Include="Dx11Manager.cpp" />
+    <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SimpleTriangleApplication.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Dx11Manager.h" />
     <ClInclude Include="DX11Common.h" />
     <ClInclude Include="Dx11RenderContext.h" />
+    <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="SimpleTriangleApplication.h" />
