@@ -10,14 +10,13 @@ enum class ShaderType
 	PS,
 	CS
 };
-
 class DX11Shader
 {
 public:
 	DX11Shader();
 	DX11Shader(std::wstring shaderName,ShaderType type);
 	~DX11Shader();
-	void Init(std::wstring shaderName, ShaderType type,std::string entryPoint);
+	void Init(ComPtr<ID3D11Device> device,std::wstring shaderName, ShaderType type,std::string entryPoint);
 	ComPtr<ID3DBlob>& GetCompiledCode(){ return m_compiledCode; }
 	ComPtr<ID3DBlob>& GetErrorMsgs(){ return m_compileErrorMsgs; }
 	std::wstring GetShaderSourceFileName() const { return m_shaderSourceFileName; }
@@ -29,4 +28,9 @@ private:
 	std::string m_entryPoint;
 	ComPtr<ID3DBlob> m_compiledCode;
 	ComPtr<ID3DBlob> m_compileErrorMsgs;
+	//shaderinterface used based on type
+	ComPtr<ID3D11VertexShader> vs;
+	ComPtr<ID3D11PixelShader> ps;
+	ComPtr<ID3D11ComputeShader> cs;
+	
 };
