@@ -3,7 +3,7 @@
 void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
 	//create shaders
-	
+	m_simpleVertexShader.Init(L"shaders/simpletriangle/VS.hlsl",ShaderType::VS,"main");
 	//create triangle model data
 	//vertexbuffer
 	std::vector<VertexBase*> verticies;
