@@ -16,4 +16,8 @@ private:
 	void GetTriangleVertices(std::vector<VertexBase*>& outverticies);
 	DX11Buffer m_triangle_vertexBuffer;
 	DX11Shader m_simpleVertexShader;
+	DX11Shader m_simplePixelShader;
+	ComPtr<ID3D11RasterizerState> m_rasterState;
+	ComPtr<ID3D11InputLayout> m_inputLayout;
+	ComPtr<ID3D11BlendState> m_blendState;
 };

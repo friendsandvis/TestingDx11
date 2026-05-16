@@ -46,3 +46,18 @@ void DX11Shader::Init(ComPtr<ID3D11Device> device,std::wstring shaderName, Shade
 	}
 
 }
+ComPtr<ID3D11VertexShader> DX11Shader::GetVertexShader()
+{
+	assert(m_shaderType == ShaderType::VS);
+	return vs;
+}
+ComPtr<ID3D11PixelShader> DX11Shader::GetPixelShader()
+{
+	assert(m_shaderType == ShaderType::PS);
+	return ps;
+}
+ComPtr<ID3D11ComputeShader> DX11Shader::GetComputeShader()
+{
+	assert(m_shaderType == ShaderType::CS);
+	return cs;
+}

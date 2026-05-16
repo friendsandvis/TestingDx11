@@ -22,6 +22,10 @@ public:
 	std::wstring GetShaderSourceFileName() const { return m_shaderSourceFileName; }
 	ShaderType GetShaderType() const { return m_shaderType; }
 	std::string GetEntryPoint() const { return m_entryPoint; }
+	ComPtr<ID3DBlob> GetCompiledCode() const { return m_compiledCode; }
+	ComPtr<ID3D11VertexShader> GetVertexShader();
+	ComPtr<ID3D11PixelShader> GetPixelShader();
+	ComPtr<ID3D11ComputeShader> GetComputeShader();
 private:
 	ShaderType m_shaderType;
 	std::wstring m_shaderSourceFileName;
@@ -32,5 +36,6 @@ private:
 	ComPtr<ID3D11VertexShader> vs;
 	ComPtr<ID3D11PixelShader> ps;
 	ComPtr<ID3D11ComputeShader> cs;
+	void GetShaderCommon();
 	
 };
