@@ -4,6 +4,7 @@
 #include"Dx11Buffer.h"
 #include"VertexData.h"
 #include"DX11Shader.h"
+#include"Model.h"
 
 
 class SimpleTriangleApplication : public DX11ApplicationManagerBase
@@ -13,7 +14,8 @@ public:
 	void InitExtras(ComPtr<ID3D11Device> device) override;
 
 private:
-	DX11Buffer m_triangle_vertexBuffer;
+	Model m_triangleModel;
+	//DX11Buffer m_triangle_vertexBuffer;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
 	ComPtr<ID3D11RasterizerState> m_rasterState;

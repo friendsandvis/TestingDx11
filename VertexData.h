@@ -28,6 +28,7 @@ public:
 	}
 	static void BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer);
 	static VertexVersionInfo GetVertexVersionInfo(VertexVersion vertVersion);
+	static void BuildInputElementDesc(VertexVersion vertVersion, std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs);
 protected:
 	VertexVersion m_vertexType;
 };

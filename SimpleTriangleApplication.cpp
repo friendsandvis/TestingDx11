@@ -9,21 +9,11 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//vertexbuffer
 	std::vector<VertexBase*> verticies;
 	BasicModelManager::GetTriangleModelVerticies_NDC(verticies,VertexVersion::VERTEXVERSION0);//GetTriangleVertices(verticies);
-	std::vector<float> verticiesDataRaw;
-	VertexBase::BuildRawVertexBuffer(verticies, verticiesDataRaw);
-	assert(verticiesDataRaw.size() > 0);
-	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	//only vertex v0 used in here for test
-	vertexBufferDesc.ByteWidth = sizeof(verticiesDataRaw[0]) * verticiesDataRaw.size();
-	vertexBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
-	D3D11_SUBRESOURCE_DATA vertexBufferInitData = {};
-	vertexBufferInitData.pSysMem = reinterpret_cast<void*>(verticiesDataRaw.data());
-	vertexBufferInitData.SysMemPitch = 0;
-	vertexBufferInitData.SysMemSlicePitch = 0;
-	m_triangle_vertexBuffer.Init(device, vertexBufferDesc,vertexBufferInitData);
+	
+	m_triangleModel.Init(VertexVersion::VERTEXVERSION0);
+	m_triangleModel.SetVertexData(verticies, true);
+	std::vector<float>& verticiesDataRaw = m_triangleModel.GetVerticiesRawData();//VertexBase::BuildRawVertexBuffer(verticies, verticiesDataRaw);
+	m_triangleModel.CreateVertexBuffer(device);
 
 	//raster state
 	D3D11_RASTERIZER_DESC rasterDesc = {};
@@ -35,26 +25,7 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 	DXASSERT(device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf()))
 		//input layout
 		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescs;
-	{
-		D3D11_INPUT_ELEMENT_DESC inputElementDescPos = {};
-		inputElementDescPos.InputSlot = 0;
-		inputElementDescPos.SemanticName = "POS";
-		inputElementDescPos.SemanticIndex = 0;
-		inputElementDescPos.Format = DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
-		inputElementDescPos.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-		inputElementDescPos.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-		inputElementDescs.push_back(inputElementDescPos);
-	}
-	{
-		D3D11_INPUT_ELEMENT_DESC inputElementDescVUV = {};
-		inputElementDescVUV.InputSlot = 0;
-		inputElementDescVUV.SemanticName = "VUV";
-		inputElementDescVUV.SemanticIndex = 0;
-		inputElementDescVUV.Format = DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
-		inputElementDescVUV.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-		inputElementDescVUV.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-		inputElementDescs.push_back(inputElementDescVUV);
-	}
+	m_triangleModel.BuildInputElementDesc(inputElementDescs);
 		ComPtr<ID3DBlob> vsCompiledCode = m_simpleVertexShader.GetCompiledCode();
 		assert(vsCompiledCode->GetBufferPointer() != nullptr);
 		DXASSERT(device->CreateInputLayout(inputElementDescs.data(), inputElementDescs.size(), vsCompiledCode->GetBufferPointer(), vsCompiledCode->GetBufferSize(), m_inputLayout.GetAddressOf()))
@@ -85,7 +56,7 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	 VertexVersionInfo vertInfo =VertexBase::GetVertexVersionInfo(VertexVersion::VERTEXVERSION0);
 	UINT v_stride = vertInfo.stride;
 	UINT v_offset = 0;
-	context.m_mainContext->IASetVertexBuffers(0, 1, m_triangle_vertexBuffer.GetDXBuffer().GetAddressOf(),&v_stride, &v_offset);
+	context.m_mainContext->IASetVertexBuffers(0, 1, m_triangleModel.GetVertexBuffer().GetDXBuffer().GetAddressOf(),&v_stride, &v_offset);
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
 	context.m_mainContext->RSSetState(m_rasterState.Get());
 	context.m_mainContext->OMSetBlendState(m_blendState.Get(),nullptr, 0xffffffff);
@@ -93,6 +64,6 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	context.m_mainContext->VSSetShader(m_simpleVertexShader.GetVertexShader().Get(),NULL,0);
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
 	//draw
-	context.m_mainContext->Draw(3, 0);
+	context.m_mainContext->Draw(m_triangleModel.GetVertexCount(), 0);
 	m_swapchain.Present();
 }
