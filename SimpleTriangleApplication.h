@@ -15,7 +15,6 @@ public:
 
 private:
 	Model m_triangleModel;
-	//DX11Buffer m_triangle_vertexBuffer;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
 	ComPtr<ID3D11RasterizerState> m_rasterState;
