@@ -82,7 +82,8 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	//----pipeline states
 	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//calculate  add stride and offset based on hardcoded assumption of using VertexVersion0 get from vertexdata used for triangle rendering.
-	UINT v_stride = sizeof(float) * 5;
+	 VertexVersionInfo vertInfo =VertexBase::GetVertexVersionInfo(VertexVersion::VERTEXVERSION0);
+	UINT v_stride = vertInfo.stride;
 	UINT v_offset = 0;
 	context.m_mainContext->IASetVertexBuffers(0, 1, m_triangle_vertexBuffer.GetDXBuffer().GetAddressOf(),&v_stride, &v_offset);
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());

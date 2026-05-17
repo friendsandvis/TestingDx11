@@ -32,3 +32,14 @@ VertexV0::VertexV0()
 {
 	m_vertexType = VertexVersion::VERTEXVERSION0;
 }
+VertexVersionInfo VertexBase::GetVertexVersionInfo(VertexVersion vertVersion)
+{
+	VertexVersionInfo vertInfo = {};
+	switch (vertVersion)
+	{
+	case VertexVersion::VERTEXVERSION0:
+		vertInfo.stride = sizeof(float) * 5;//3f pos, 2f uv
+		break;
+	}
+	return vertInfo;
+}

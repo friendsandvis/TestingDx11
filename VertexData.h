@@ -11,6 +11,10 @@ enum class VertexVersion
 	VERTEXVERSION2,
 	VERTEXVERSION3
 };
+struct VertexVersionInfo
+{
+	unsigned int stride;
+};
 class VertexBase
 {
 public:
@@ -23,6 +27,7 @@ public:
 		return m_vertexType;
 	}
 	static void BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer);
+	static VertexVersionInfo GetVertexVersionInfo(VertexVersion vertVersion);
 protected:
 	VertexVersion m_vertexType;
 };
