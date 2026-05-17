@@ -1,5 +1,5 @@
 #include"SimpleTriangleApplication.h"
-
+#include"BasicModelManager.h"
 void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
 	//create shaders
@@ -8,7 +8,7 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//create triangle model data
 	//vertexbuffer
 	std::vector<VertexBase*> verticies;
-	GetTriangleVertices(verticies);
+	BasicModelManager::GetTriangleModelVerticies_NDC(verticies,VertexVersion::VERTEXVERSION0);//GetTriangleVertices(verticies);
 	std::vector<float> verticiesDataRaw;
 	VertexBase::BuildRawVertexBuffer(verticies, verticiesDataRaw);
 	assert(verticiesDataRaw.size() > 0);
@@ -94,22 +94,4 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->Draw(3, 0);
 	m_swapchain.Present();
-}
-void SimpleTriangleApplication::GetTriangleVertices(std::vector<VertexBase*>& outverticies)
-{
-	//0(center-top)
-	VertexV0* vert = new VertexV0();
-	vert->m_position = { 0.0f, 1.0f, 0.0f };
-	vert->m_uv = { 0.5f,1.0f };
-	outverticies.push_back(vert);
-	//1(left-bottom)
-	vert = new VertexV0();
-	vert->m_position = { -1.0f,-1.0f,0.0f };
-	vert->m_uv = { 0.0f,0.0f };
-	outverticies.push_back(vert);
-	//2(right-bottom)
-	vert = new VertexV0();
-	vert->m_position = { 1.0f,-1.0f,0.0f };
-	vert->m_uv = { 1.0f,0.0f };
-	outverticies.push_back(vert);
 }

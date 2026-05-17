@@ -2,30 +2,36 @@
 #include"DX11Common.h"
 #include<vector>
 
-enum class VertexType
+enum class VertexVersion
 {
-	VertexV0
+	//VertexV0
+	UNKNOWN,
+	VERTEXVERSION0,
+	VERTEXVERSION1,
+	VERTEXVERSION2,
+	VERTEXVERSION3
 };
 class VertexBase
 {
 public:
-	void setVertexType(VertexType type)
+	void setVertexType(VertexVersion type)
 	{
 		m_vertexType = type;
 	}
-	VertexType GetVertexType()
+	VertexVersion GetVertexType()
 	{
 		return m_vertexType;
 	}
 	static void BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer);
-private:
-	VertexType m_vertexType;
+protected:
+	VertexVersion m_vertexType;
 };
 class VertexV0 : public VertexBase
 {
 public:
 	XMFLOAT3 m_position;
 	XMFLOAT2 m_uv;
+	VertexV0();
 	void setPosition(float x, float y, float z)
 	{
 		m_position.x = x;

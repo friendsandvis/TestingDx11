@@ -60,6 +60,12 @@
     <ClCompile Include="DXShaderCompiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleQuadApplication.cpp">
+      <Filter>applications</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -108,6 +114,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DXShaderCompiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleQuadApplication.h">
+      <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicModelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicModelManager.cpp" />
     <ClCompile Include="ClearScreenApplication.cpp" />
     <ClCompile Include="Dx11ApplicationManagerBase.cpp" />
     <ClCompile Include="Dx11Buffer.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="FXShaderCompiler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimpleQuadApplication.cpp" />
     <ClCompile Include="SimpleTriangleApplication.cpp" />
     <ClCompile Include="VertexData.cpp" />
     <ClCompile Include="Win32WindMaker.cpp" />
@@ -142,6 +144,7 @@
     <ClCompile Include="WindowProcHook.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicModelManager.h" />
     <ClInclude Include="ClearScreenApplication.h" />
     <ClInclude Include="Dx11ApplicationManagerBase.h" />
     <ClInclude Include="Dx11Buffer.h" />
@@ -153,6 +156,7 @@
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="FXShaderCompiler.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="SimpleQuadApplication.h" />
     <ClInclude Include="SimpleTriangleApplication.h" />
     <ClInclude Include="VertexData.h" />
     <ClInclude Include="Win32WindMaker.h" />

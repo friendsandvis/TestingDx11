@@ -5,14 +5,14 @@ void VertexBase::BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::
 {
 	assert(vertexData.size() > 0);
 	//make sure type is consistent for each vertex in data passed
-	VertexType verttype_expected = vertexData[0]->GetVertexType();
+	VertexVersion verttype_expected = vertexData[0]->GetVertexType();
 	outBuffer.clear();
 	for (VertexBase* v : vertexData)
 	{
 		assert(v->GetVertexType() == verttype_expected);
 			switch (verttype_expected)
 			{
-				case VertexType::VertexV0:
+				case VertexVersion::VERTEXVERSION0:
 			{
 				VertexV0* vert = static_cast<VertexV0*>(v);
 				outBuffer.push_back(vert->m_position.x);
@@ -27,4 +27,8 @@ void VertexBase::BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::
 			}
 
 	}
+}
+VertexV0::VertexV0()
+{
+	m_vertexType = VertexVersion::VERTEXVERSION0;
 }

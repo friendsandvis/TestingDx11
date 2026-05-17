@@ -13,7 +13,6 @@ public:
 	void InitExtras(ComPtr<ID3D11Device> device) override;
 
 private:
-	void GetTriangleVertices(std::vector<VertexBase*>& outverticies);
 	DX11Buffer m_triangle_vertexBuffer;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
