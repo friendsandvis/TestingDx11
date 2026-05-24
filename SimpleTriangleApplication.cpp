@@ -40,6 +40,23 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 			blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		}
 		DXASSERT(device->CreateBlendState(&blendDesc, m_blendState.GetAddressOf()))
+			//constant buffer
+		{
+			TestConstantBuffer testConstantBuffer;
+			testConstantBuffer.colour = { 1.0f,1.0f,1.0f,1.0f };
+			D3D11_BUFFER_DESC testConstantBufferDesc = { 0 };
+			testConstantBufferDesc.ByteWidth = sizeof(TestConstantBuffer);
+			testConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+			testConstantBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+			testConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+			testConstantBufferDesc.MiscFlags = 0;
+			testConstantBufferDesc.StructureByteStride = sizeof(TestConstantBuffer);
+			D3D11_SUBRESOURCE_DATA testConstantB8ufferSubresData = { 0 };
+			testConstantB8ufferSubresData.pSysMem = &testConstantBuffer;
+			testConstantB8ufferSubresData.SysMemPitch = 0;
+			testConstantB8ufferSubresData.SysMemSlicePitch = 0;
+			DXASSERT(device->CreateBuffer(&testConstantBufferDesc, &testConstantB8ufferSubresData, m_testConstantBuffer.GetAddressOf()))
+		}
 }
 void SimpleTriangleApplication::Render(RenderContext context)
 {
@@ -64,6 +81,7 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	context.m_mainContext->VSSetShader(m_simpleVertexShader.GetVertexShader().Get(),NULL,0);
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
 	//draw
+	context.m_mainContext->PSSetConstantBuffers(0, 1, m_testConstantBuffer.GetAddressOf());
 	context.m_mainContext->Draw(m_triangleModel.GetVertexCount(), 0);
 	m_swapchain.Present();
 }
