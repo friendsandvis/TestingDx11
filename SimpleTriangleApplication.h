@@ -14,9 +14,14 @@ public:
 	void InitExtras(ComPtr<ID3D11Device> device) override;
 
 private:
-	struct TestConstantBuffer
+	struct PSConstantBuffer
 	{
 		DirectX::XMFLOAT4 colour;
+	};
+	struct VertexConstantBuffer
+	{
+		DirectX::XMMATRIX viewMat;
+		DirectX::XMMATRIX projMat;
 	};
 	Model m_triangleModel;
 	DX11Shader m_simpleVertexShader;
@@ -24,6 +29,8 @@ private:
 	ComPtr<ID3D11RasterizerState> m_rasterState;
 	ComPtr<ID3D11InputLayout> m_inputLayout;
 	ComPtr<ID3D11BlendState> m_blendState;
-	ComPtr<ID3D11Buffer> m_testConstantBuffer;
+	ComPtr<ID3D11Buffer> m_psConstantBuffer;
+	ComPtr<ID3D11Buffer> m_vsConstantBuffer;
+	VertexConstantBuffer m_VertexConstantBufferData;
 
 };

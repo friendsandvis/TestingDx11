@@ -42,20 +42,36 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DXASSERT(device->CreateBlendState(&blendDesc, m_blendState.GetAddressOf()))
 			//constant buffer
 		{
-			TestConstantBuffer testConstantBuffer;
+			PSConstantBuffer testConstantBuffer;
 			testConstantBuffer.colour = { 1.0f,1.0f,1.0f,1.0f };
 			D3D11_BUFFER_DESC testConstantBufferDesc = { 0 };
-			testConstantBufferDesc.ByteWidth = sizeof(TestConstantBuffer);
+			testConstantBufferDesc.ByteWidth = sizeof(PSConstantBuffer);
 			testConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 			testConstantBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
 			testConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 			testConstantBufferDesc.MiscFlags = 0;
-			testConstantBufferDesc.StructureByteStride = sizeof(TestConstantBuffer);
-			D3D11_SUBRESOURCE_DATA testConstantB8ufferSubresData = { 0 };
-			testConstantB8ufferSubresData.pSysMem = &testConstantBuffer;
-			testConstantB8ufferSubresData.SysMemPitch = 0;
-			testConstantB8ufferSubresData.SysMemSlicePitch = 0;
-			DXASSERT(device->CreateBuffer(&testConstantBufferDesc, &testConstantB8ufferSubresData, m_testConstantBuffer.GetAddressOf()))
+			testConstantBufferDesc.StructureByteStride = sizeof(PSConstantBuffer);
+			D3D11_SUBRESOURCE_DATA psConstantB8ufferSubresData = { 0 };
+			psConstantB8ufferSubresData.pSysMem = &testConstantBuffer;
+			psConstantB8ufferSubresData.SysMemPitch = 0;
+			psConstantB8ufferSubresData.SysMemSlicePitch = 0;
+			DXASSERT(device->CreateBuffer(&testConstantBufferDesc, &psConstantB8ufferSubresData, m_psConstantBuffer.GetAddressOf()))
+		}
+		{
+			m_VertexConstantBufferData.viewMat = DirectX::XMMatrixIdentity();
+			m_VertexConstantBufferData.projMat = DirectX::XMMatrixIdentity();
+			D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
+			vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
+			vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+			vsConstantBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+			vsConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+			vsConstantBufferDesc.MiscFlags = 0;
+			vsConstantBufferDesc.StructureByteStride = sizeof(PSConstantBuffer);
+			D3D11_SUBRESOURCE_DATA vsConstantB8ufferSubresData = { 0 };
+			vsConstantB8ufferSubresData.pSysMem = &m_VertexConstantBufferData;
+			vsConstantB8ufferSubresData.SysMemPitch = 0;
+			vsConstantB8ufferSubresData.SysMemSlicePitch = 0;
+			DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_vsConstantBuffer.GetAddressOf()))
 		}
 }
 void SimpleTriangleApplication::Render(RenderContext context)
@@ -81,7 +97,8 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	context.m_mainContext->VSSetShader(m_simpleVertexShader.GetVertexShader().Get(),NULL,0);
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
 	//draw
-	context.m_mainContext->PSSetConstantBuffers(0, 1, m_testConstantBuffer.GetAddressOf());
+	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
+	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
 	context.m_mainContext->Draw(m_triangleModel.GetVertexCount(), 0);
 	m_swapchain.Present();
 }
