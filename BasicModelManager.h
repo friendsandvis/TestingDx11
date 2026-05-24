@@ -5,5 +5,5 @@
 class BasicModelManager
 {
 public:
-	static void GetTriangleModelVerticies_NDC(std::vector<VertexBase*>& outverticies, VertexVersion vertexTypeToBuild = VertexVersion::VERTEXVERSION0);
+	static void GetTriangleModelVerticies(std::vector<VertexBase*>& outverticies, VertexVersion vertexTypeToBuild = VertexVersion::VERTEXVERSION0);
 };

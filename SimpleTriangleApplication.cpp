@@ -8,7 +8,7 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//create triangle model data
 	//vertexbuffer
 	std::vector<VertexBase*> verticies;
-	BasicModelManager::GetTriangleModelVerticies_NDC(verticies,VertexVersion::VERTEXVERSION0);//GetTriangleVertices(verticies);
+	BasicModelManager::GetTriangleModelVerticies(verticies,VertexVersion::VERTEXVERSION0);//GetTriangleVertices(verticies);
 	
 	m_triangleModel.Init(VertexVersion::VERTEXVERSION0);
 	m_triangleModel.SetVertexData(verticies, true);
@@ -60,6 +60,13 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 		{
 			m_VertexConstantBufferData.viewMat = DirectX::XMMatrixIdentity();
 			m_VertexConstantBufferData.projMat = DirectX::XMMatrixIdentity();
+			m_VertexConstantBufferData.modelMat = DirectX::XMMatrixIdentity();
+			DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f,0.0f,-3.0f,1.0f);
+			DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+			m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos,targetPos,upDir);
+			m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(),m_swapchain.GetHeight(), 0.1f, 100.0f);
+			m_VertexConstantBufferData.modelMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
 			D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
 			vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
 			vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;

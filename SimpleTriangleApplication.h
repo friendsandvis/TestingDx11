@@ -22,6 +22,7 @@ private:
 	{
 		DirectX::XMMATRIX viewMat;
 		DirectX::XMMATRIX projMat;
+		DirectX::XMMATRIX modelMat;
 	};
 	Model m_triangleModel;
 	DX11Shader m_simpleVertexShader;

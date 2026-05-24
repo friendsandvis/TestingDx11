@@ -1,6 +1,6 @@
 #include"BasicModelManager.h"
 
-void BasicModelManager::GetTriangleModelVerticies_NDC(std::vector<VertexBase*>& outverticies,VertexVersion vertexTypeToBuild)
+void BasicModelManager::GetTriangleModelVerticies(std::vector<VertexBase*>& outverticies,VertexVersion vertexTypeToBuild)
 {
 	assert(vertexTypeToBuild == VertexVersion::VERTEXVERSION0);
 	//0(center-top)
