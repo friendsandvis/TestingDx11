@@ -3,6 +3,7 @@
 #include"DX11ApplicationManagerBase.h"
 #include"ClearScreenApplication.h"
 #include"SimpleTriangleApplication.h"
+#include"SimpleQuadApplication.h"
 #include<iostream>
 #define WINWIDTH 1920
 #define WINHEIGHT 1080
@@ -10,6 +11,7 @@ int main()
 {
 	std::cout << "0.clearscreen.\n";
 	std::cout << "1.triangleApplication.\n";
+	std::cout << "2.quadApplication.\n";
 	std::cout << "Enter App Number to run:-\n";
 	int appnumber;
 	std::cin >> appnumber;
@@ -28,6 +30,11 @@ int main()
 		case 1:
 		{
 			dx11AppManager = new SimpleTriangleApplication();
+			break;
+		}
+		case 2:
+		{
+			dx11AppManager = new SimpleQuadApplication();
 			break;
 		}
 	}
