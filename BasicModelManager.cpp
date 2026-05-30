@@ -54,3 +54,35 @@ void BasicModelManager::GetQuadModelVerticies(std::vector<VertexBase*>& outverti
 	vert->m_uv = { 1.0f,0.0f };
 	outverticies.push_back(vert);
 }
+
+void BasicModelManager::GetQuadModelVerticiesIndexed(std::vector<VertexBase*>& outverticies, std::vector<unsigned int>& outindicies, VertexVersion vertexTypeToBuild)
+{
+	assert(vertexTypeToBuild == VertexVersion::VERTEXVERSION0);
+	//0(left-top)
+	VertexV0* vert = new VertexV0();
+	vert->m_position = { -1.0f, 1.0f, 0.0f };
+	vert->m_uv = { 0.0f,1.0f };
+	outverticies.push_back(vert);
+	//1(left-bottom)
+	vert = new VertexV0();
+	vert->m_position = { -1.0f,-1.0f,0.0f };
+	vert->m_uv = { 0.0f,0.0f };
+	outverticies.push_back(vert);
+	//2(right-bottom)
+	vert = new VertexV0();
+	vert->m_position = { 1.0f,-1.0f,0.0f };
+	vert->m_uv = { 1.0f,0.0f };
+	outverticies.push_back(vert);
+	//3(right-top)
+	vert = new VertexV0();
+	vert->m_position = { 1.0f,1.0f,0.0f };
+	vert->m_uv = { 1.0f,1.0f };
+	outverticies.push_back(vert);
+	//set indicies for quad
+	outindicies.push_back(0);
+	outindicies.push_back(1);
+	outindicies.push_back(2);
+	outindicies.push_back(3);
+	outindicies.push_back(0);
+	outindicies.push_back(2);
+}

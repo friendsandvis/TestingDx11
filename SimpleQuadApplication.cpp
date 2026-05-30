@@ -7,13 +7,14 @@ void SimpleQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 	m_simpleVertexShader.Init(device, L"shaders/simpletriangle/VS.hlsl", ShaderType::VS, "main");
 	//create triangle model data
 	//vertexbuffer
-	std::vector<VertexBase*> verticies;
-	BasicModelManager::GetQuadModelVerticies(verticies, VertexVersion::VERTEXVERSION0);//GetTriangleVertices(verticies);
-
-	m_quadModel.Init(VertexVersion::VERTEXVERSION0);
+		std::vector<VertexBase*> verticies;
+		std::vector<unsigned int> indicies;
+	BasicModelManager::GetQuadModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
+	m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
 	m_quadModel.SetVertexData(verticies, true);
-	std::vector<float>& verticiesDataRaw = m_quadModel.GetVerticiesRawData();//VertexBase::BuildRawVertexBuffer(verticies, verticiesDataRaw);
+	m_quadModel.SetIndexData(indicies);
 	m_quadModel.CreateVertexBuffer(device);
+	m_quadModel.CreateIndexBuffer(device);
 
 	//raster state
 	D3D11_RASTERIZER_DESC rasterDesc = {};
@@ -97,6 +98,10 @@ void SimpleQuadApplication::Render(RenderContext context)
 	UINT v_stride = vertInfo.stride;
 	UINT v_offset = 0;
 	context.m_mainContext->IASetVertexBuffers(0, 1, m_quadModel.GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
+	if (m_quadModel.HasIndicies())
+	{
+		context.m_mainContext->IASetIndexBuffer(m_quadModel.GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	}
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
 	context.m_mainContext->RSSetState(m_rasterState.Get());
 	context.m_mainContext->OMSetBlendState(m_blendState.Get(), nullptr, 0xffffffff);
@@ -106,6 +111,13 @@ void SimpleQuadApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
-	context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
+	if (m_quadModel.HasIndicies())
+	{
+		context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
+	}
+	else
+	{
+		context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
+	}
 	m_swapchain.Present();
 }
