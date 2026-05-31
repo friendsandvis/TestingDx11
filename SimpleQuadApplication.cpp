@@ -81,16 +81,35 @@ void SimpleQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 		vsConstantB8ufferSubresData.SysMemSlicePitch = 0;
 		DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_vsConstantBuffer.GetAddressOf()))
 	}
+	//create depth stencil resource and dsv
+	{
+		D3D11_TEXTURE2D_DESC depthStencilTexDesc = {};
+		depthStencilTexDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+		depthStencilTexDesc.Width = m_swapchain.GetWidth();
+		depthStencilTexDesc.Height = m_swapchain.GetHeight();
+		depthStencilTexDesc.MipLevels = 1;
+		depthStencilTexDesc.ArraySize = 1;
+		depthStencilTexDesc.SampleDesc.Count = 1;
+		depthStencilTexDesc.SampleDesc.Quality = 0;
+		depthStencilTexDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+		depthStencilTexDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+		depthStencilTexDesc.CPUAccessFlags = 0;
+		depthStencilTexDesc.MiscFlags = 0;
+		DXASSERT(device->CreateTexture2D(&depthStencilTexDesc, nullptr, m_depthStencilTex.GetAddressOf()))
+			DXASSERT(device->CreateDepthStencilView(m_depthStencilTex.Get(), nullptr, m_depthStencilView.GetAddressOf()))
+	}
+
 }
 void SimpleQuadApplication::Render(RenderContext context)
 {
-	context.m_mainContext->OMSetRenderTargets(1, m_swapchain.GetBackBufferRTV().GetAddressOf(), nullptr);
+	context.m_mainContext->OMSetRenderTargets(1, m_swapchain.GetBackBufferRTV().GetAddressOf(),m_depthStencilView.Get());
 	D3D11_RECT scissorRect = GetScissorRect();
 	context.m_mainContext->RSSetScissorRects(1, &scissorRect);
 	D3D11_VIEWPORT viewport = GetViewport();
 	context.m_mainContext->RSSetViewports(1, &viewport);
 	float clearcolour[4] = { 0.0f,1.0f,0.0f,1.0f };
 	context.m_mainContext->ClearRenderTargetView(m_swapchain.GetBackBufferRTV().Get(), clearcolour);
+	context.m_mainContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH, 1.0f, 0);
 	//----pipeline states
 	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//calculate  add stride and offset based on hardcoded assumption of using VertexVersion0 get from vertexdata used for triangle rendering.

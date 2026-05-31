@@ -33,5 +33,8 @@ private:
 	ComPtr<ID3D11Buffer> m_psConstantBuffer;
 	ComPtr<ID3D11Buffer> m_vsConstantBuffer;
 	VertexConstantBuffer m_VertexConstantBufferData;
+	ComPtr<ID3D11Texture2D> m_depthStencilTex;
+	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
+	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 
 };
