@@ -98,6 +98,15 @@ void SimpleQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DXASSERT(device->CreateTexture2D(&depthStencilTexDesc, nullptr, m_depthStencilTex.GetAddressOf()))
 			DXASSERT(device->CreateDepthStencilView(m_depthStencilTex.Get(), nullptr, m_depthStencilView.GetAddressOf()))
 	}
+	//depth stencil state
+	{
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = {};
+		depthStencilStateDesc.DepthEnable = FALSE;
+		depthStencilStateDesc.StencilEnable = FALSE;
+		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+		device->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf());
+
+	}
 
 }
 void SimpleQuadApplication::Render(RenderContext context)
@@ -124,6 +133,7 @@ void SimpleQuadApplication::Render(RenderContext context)
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
 	context.m_mainContext->RSSetState(m_rasterState.Get());
 	context.m_mainContext->OMSetBlendState(m_blendState.Get(), nullptr, 0xffffffff);
+	context.m_mainContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
 	//shader
 	context.m_mainContext->VSSetShader(m_simpleVertexShader.GetVertexShader().Get(), NULL, 0);
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
