@@ -137,6 +137,7 @@
     <ClCompile Include="FXShaderCompiler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="SimpleCubeApplication.cpp" />
     <ClCompile Include="SimpleQuadApplication.cpp" />
     <ClCompile Include="SimpleTriangleApplication.cpp" />
     <ClCompile Include="VertexData.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="FXShaderCompiler.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="SimpleCubeApplication.h" />
     <ClInclude Include="SimpleQuadApplication.h" />
     <ClInclude Include="SimpleTriangleApplication.h" />
     <ClInclude Include="VertexData.h" />
