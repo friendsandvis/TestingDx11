@@ -66,8 +66,9 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 		DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos, targetPos, upDir);
-		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.1f, 100.0f);
-		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.0f, 100.0f);
+		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+		m_VertexConstantBufferData.modelMat = scaleMat;
 		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
 		vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
 		vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
@@ -101,9 +102,10 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//depth stencil state
 	{
 		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = {};
-		depthStencilStateDesc.DepthEnable = FALSE;
+		depthStencilStateDesc.DepthEnable = TRUE;
 		depthStencilStateDesc.StencilEnable = FALSE;
 		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
 		device->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf());
 
 	}
@@ -140,6 +142,57 @@ void SimpleCubeApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
+	//draw front quad 2 for depth testing checks
+	{
+		//change constant buffer data for quad 2
+		{
+			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
+			XMMATRIX translateMat = DirectX::XMMatrixTranslation(2.0f, 2.0f, 6.0f);
+			m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
+			//m_VertexConstantBufferData.modelMat = XMMatrixTranspose(m_VertexConstantBufferData.modelMat);
+			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
+			context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+		}
+		{
+			PSConstantBuffer pixelConstantBufferData;
+			pixelConstantBufferData.colour = { 1.0f,0.0f,0.0f,1.0f };
+			D3D11_MAPPED_SUBRESOURCE pixelConstBufferMapped = {};
+			DXASSERT(context.m_mainContext->Map(m_psConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &pixelConstBufferMapped))
+				memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
+			context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
+		}
+
+		if (m_quadModel.HasIndicies())
+		{
+			context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
+		}
+		else
+		{
+			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
+		}
+	}
+	//update constant buffer for quad 1
+	{
+		{
+			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
+			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f);
+			m_VertexConstantBufferData.modelMat = scaleMat;
+			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
+			context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+		}
+		{
+			PSConstantBuffer pixelConstantBufferData;
+			pixelConstantBufferData.colour = { 1.0f,1.0f,1.0f,1.0f };
+			D3D11_MAPPED_SUBRESOURCE pixelConstBufferMapped = {};
+			DXASSERT(context.m_mainContext->Map(m_psConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &pixelConstBufferMapped))
+				memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
+			context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
+		}
+	}
 	if (m_quadModel.HasIndicies())
 	{
 		context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
