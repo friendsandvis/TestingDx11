@@ -142,14 +142,14 @@ void SimpleCubeApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
-	//draw front quad 2 for depth testing checks
+	//draw front quad  1 for depth testing checks(z at 6))
 	{
-		//change constant buffer data for quad 2
+		//change constant buffer data for quad 1
 		{
 			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
 			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
 				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
-			XMMATRIX translateMat = DirectX::XMMatrixTranslation(2.0f, 2.0f, 6.0f);
+			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 6.0f);
 			m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
 			//m_VertexConstantBufferData.modelMat = XMMatrixTranspose(m_VertexConstantBufferData.modelMat);
 			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
@@ -173,12 +173,13 @@ void SimpleCubeApplication::Render(RenderContext context)
 			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
 		}
 	}
-	//update constant buffer for quad 1
+	//update constant buffer for quad 2(z at 5)
 	{
 		{
 			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
 			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
 				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
+			//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
 			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f);
 			m_VertexConstantBufferData.modelMat = scaleMat;
 			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
