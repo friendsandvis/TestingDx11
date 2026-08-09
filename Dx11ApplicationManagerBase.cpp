@@ -47,6 +47,8 @@ D3D11_VIEWPORT DX11ApplicationManagerBase::GetViewport()
 	viewPort.TopLeftY = 0;
 	viewPort.Width = static_cast<FLOAT>(m_swapchain.GetWidth());
 	viewPort.Height = static_cast<FLOAT>(m_swapchain.GetHeight());
+	viewPort.MinDepth = 0.0f;
+	viewPort.MaxDepth = 1.0f;
 	return viewPort;
 }
 D3D11_RECT DX11ApplicationManagerBase::GetScissorRect()

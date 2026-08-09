@@ -9,3 +9,10 @@
 
 using namespace Microsoft::WRL;
 using namespace DirectX;
+
+inline XMMATRIX ProcessMatrixForShaderUse(XMMATRIX mat)
+{
+	//row major(cpp) to column major(hlsl) conversion
+	return XMMatrixTranspose(mat);
+}
+	

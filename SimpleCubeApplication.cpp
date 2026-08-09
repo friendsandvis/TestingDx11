@@ -1,5 +1,12 @@
 #include"SimpleCubeApplication.h"
 #include"BasicModelManager.h"
+/*
+* quick notes on depth testing in dx11 depth clip needed to cull if not in frustum set for projection
+* note the cam position when specifing z translates for model matrix viewmatrix also translate to bring cam to 0.0( so negitice for cam z is added.
+* not forget viewport depth min/max as they are used to map depth from Vertex shader to a final depth value used further in pipe till wtrie.
+* 
+*/
+//TODO: shader used here is used elsewhere to make other places used matrix preupload processing too.
 void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
 	//create shaders
@@ -23,6 +30,7 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 	rasterDesc.ScissorEnable = FALSE;
 	rasterDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = FALSE;
+	rasterDesc.DepthClipEnable = TRUE;
 	DXASSERT(device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf()))
 		//input layout
 		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescs;
@@ -66,7 +74,9 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 		DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos, targetPos, upDir);
-		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.0f, 100.0f);
+		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
+		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.0f, 9.5f);
+		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
 		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
 		m_VertexConstantBufferData.modelMat = scaleMat;
 		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
@@ -142,16 +152,16 @@ void SimpleCubeApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
-	//draw front quad  1 for depth testing checks(z at 6))
-	{
+	//draw front quad  1 for depth testing checks(z at 3))red
+	  {
 		//change constant buffer data for quad 1
 		{
 			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
 			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
 				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
-			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 6.0f);
+			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 3.0f);
 			m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
-			//m_VertexConstantBufferData.modelMat = XMMatrixTranspose(m_VertexConstantBufferData.modelMat);
+			m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
 			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
 			context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
 		}
@@ -173,34 +183,38 @@ void SimpleCubeApplication::Render(RenderContext context)
 			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
 		}
 	}
-	//update constant buffer for quad 2(z at 5)
-	{
+	//draw quad 2(white)
+	   {
+		//update constant buffer for quad 2(z at 2)
 		{
-			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
-			DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
-				XMMATRIX scaleMat = DirectX::XMMatrixScaling(10.0f, 10.0f, 1.0f);
-			//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
-			XMMATRIX translateMat = DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f);
-			m_VertexConstantBufferData.modelMat = scaleMat;
-			memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
-			context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+			{
+				D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+				DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+					XMMATRIX scaleMat = DirectX::XMMatrixScaling(5.0f, 5.0f, 1.0f);
+				//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
+				XMMATRIX translateMat = DirectX::XMMatrixTranslation(-0.3f, 0.5f, 2.0f);
+				m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
+				m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
+				memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
+				context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+			}
+			{
+				PSConstantBuffer pixelConstantBufferData;
+				pixelConstantBufferData.colour = { 1.0f,1.0f,1.0f,1.0f };
+				D3D11_MAPPED_SUBRESOURCE pixelConstBufferMapped = {};
+				DXASSERT(context.m_mainContext->Map(m_psConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &pixelConstBufferMapped))
+					memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
+				context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
+			}
 		}
+		if (m_quadModel.HasIndicies())
 		{
-			PSConstantBuffer pixelConstantBufferData;
-			pixelConstantBufferData.colour = { 1.0f,1.0f,1.0f,1.0f };
-			D3D11_MAPPED_SUBRESOURCE pixelConstBufferMapped = {};
-			DXASSERT(context.m_mainContext->Map(m_psConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &pixelConstBufferMapped))
-				memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
-			context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
+			context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
 		}
-	}
-	if (m_quadModel.HasIndicies())
-	{
-		context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
-	}
-	else
-	{
-		context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
+		else
+		{
+			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
+		}
 	}
 	m_swapchain.Present();
 }

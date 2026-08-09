@@ -19,8 +19,8 @@ cbuffer VertexConstants : register(b1)
 VSOut main(VSIn input)
 {
     VSOut output;
-		float4x4 mvpMat = mul(projMat,mul(viewMat,modelMat));
-		output.pos = mul(mvpMat,float4(input.vpos,1.0f));
+		float4x4 mvpMat = mul(mul(modelMat,viewMat), projMat);
+		output.pos = mul(float4(input.vpos,1.0f), mvpMat);
 
     output.color =float4(1.0,1.0,1.0,1.0f);
 	output.uv=input.vuv;
