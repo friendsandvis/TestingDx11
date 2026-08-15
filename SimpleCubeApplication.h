@@ -25,6 +25,7 @@ private:
 		DirectX::XMMATRIX modelMat;
 	};
 	Model m_quadModel;
+	Model m_cubeModel;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
 	ComPtr<ID3D11RasterizerState> m_rasterState;
@@ -36,5 +37,6 @@ private:
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
-
+	void RenderTestQuadsDepthCheck(RenderContext& context);
+	void RenderCube(RenderContext& context);
 };

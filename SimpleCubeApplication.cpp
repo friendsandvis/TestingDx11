@@ -12,17 +12,28 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//create shaders
 	m_simplePixelShader.Init(device, L"shaders/simplecube/PS.hlsl", ShaderType::PS, "main");
 	m_simpleVertexShader.Init(device, L"shaders/simplecube/VS.hlsl", ShaderType::VS, "main");
-	//create triangle model data
-	//vertexbuffer
-	std::vector<VertexBase*> verticies;
-	std::vector<unsigned int> indicies;
-	BasicModelManager::GetQuadModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
-	m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
-	m_quadModel.SetVertexData(verticies, true);
-	m_quadModel.SetIndexData(indicies);
-	m_quadModel.CreateVertexBuffer(device);
-	m_quadModel.CreateIndexBuffer(device);
-
+	//create quad model data
+	{
+		std::vector<VertexBase*> verticies;
+		std::vector<unsigned int> indicies;
+		BasicModelManager::GetQuadModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
+		m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
+		m_quadModel.SetVertexData(verticies, true);
+		m_quadModel.SetIndexData(indicies);
+		m_quadModel.CreateVertexBuffer(device);
+		m_quadModel.CreateIndexBuffer(device);
+	}
+	//create cube model data
+	{
+		std::vector<VertexBase*> verticies;
+		std::vector<unsigned int> indicies;
+		BasicModelManager::GetCubeModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
+		m_cubeModel.Init(VertexVersion::VERTEXVERSION0, true);
+		m_cubeModel.SetVertexData(verticies, true);
+		m_cubeModel.SetIndexData(indicies);
+		m_cubeModel.CreateVertexBuffer(device);
+		m_cubeModel.CreateIndexBuffer(device);
+	}
 	//raster state
 	D3D11_RASTERIZER_DESC rasterDesc = {};
 	rasterDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
@@ -131,17 +142,8 @@ void SimpleCubeApplication::Render(RenderContext context)
 	float clearcolour[4] = { 0.0f,1.0f,0.0f,1.0f };
 	context.m_mainContext->ClearRenderTargetView(m_swapchain.GetBackBufferRTV().Get(), clearcolour);
 	context.m_mainContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH, 1.0f, 0);
-	//----pipeline states
 	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//calculate  add stride and offset based on hardcoded assumption of using VertexVersion0 get from vertexdata used for triangle rendering.
-	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(VertexVersion::VERTEXVERSION0);
-	UINT v_stride = vertInfo.stride;
-	UINT v_offset = 0;
-	context.m_mainContext->IASetVertexBuffers(0, 1, m_quadModel.GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
-	if (m_quadModel.HasIndicies())
-	{
-		context.m_mainContext->IASetIndexBuffer(m_quadModel.GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-	}
+	//common states setup
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
 	context.m_mainContext->RSSetState(m_rasterState.Get());
 	context.m_mainContext->OMSetBlendState(m_blendState.Get(), nullptr, 0xffffffff);
@@ -152,8 +154,14 @@ void SimpleCubeApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
+	RenderTestQuadsDepthCheck(context);
+	m_swapchain.Present();
+}
+
+void SimpleCubeApplication::RenderTestQuadsDepthCheck(RenderContext& context)
+{
 	//draw front quad  1 for depth testing checks(z at 3))red
-	  {
+	{
 		//change constant buffer data for quad 1
 		{
 			D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
@@ -176,7 +184,7 @@ void SimpleCubeApplication::Render(RenderContext context)
 		m_quadModel.Draw(&context);
 	}
 	//draw quad 2(white)
-	   {
+	{
 		//update constant buffer for quad 2(z at 2)
 		{
 			{
@@ -201,5 +209,9 @@ void SimpleCubeApplication::Render(RenderContext context)
 		}
 		m_quadModel.Draw(&context);
 	}
-	m_swapchain.Present();
+}
+
+void SimpleCubeApplication::RenderCube(RenderContext& context)
+{
+
 }

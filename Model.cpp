@@ -75,6 +75,16 @@ void Model::Draw(RenderContext* context)
 	{
 		return;
 	}
+	//setup vertex index buffer and layout
+	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(m_vertexVersion);
+	UINT v_stride = vertInfo.stride;
+	UINT v_offset = 0;
+	context->m_mainContext->IASetVertexBuffers(0, 1, GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
+	if (HasIndicies())
+	{
+		context->m_mainContext->IASetIndexBuffer(GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	}
+	
 	if (HasIndicies())
 	{
 		context->m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);
