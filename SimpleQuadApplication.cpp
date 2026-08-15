@@ -3,8 +3,8 @@
 void SimpleQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
 	//create shaders
-	m_simplePixelShader.Init(device, L"shaders/simpletriangle/PS.hlsl", ShaderType::PS, "main");
-	m_simpleVertexShader.Init(device, L"shaders/simpletriangle/VS.hlsl", ShaderType::VS, "main");
+	m_simplePixelShader.Init(device, L"shaders/simplequad/PS.hlsl", ShaderType::PS, "main");
+	m_simpleVertexShader.Init(device, L"shaders/simplequad/VS.hlsl", ShaderType::VS, "main");
 	//create triangle model data
 	//vertexbuffer
 		std::vector<VertexBase*> verticies;
