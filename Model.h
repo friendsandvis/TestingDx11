@@ -2,7 +2,7 @@
 #include<vector>
 #include"VertexData.h"
 #include"Dx11Buffer.h"
-
+class RenderContext;
 class Model
 {
 public:
@@ -19,6 +19,7 @@ public:
 	DX11Buffer& GetIndexBuffer() { return m_indexBuffer; }
 	void BuildInputElementDesc(std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs);
 	bool HasIndicies() { return m_HasIndicies; }
+	void Draw(RenderContext* context);
 protected:
 	std::vector<VertexBase*> m_verticies;
 	std::vector<unsigned int> m_indicies;

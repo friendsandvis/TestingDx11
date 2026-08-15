@@ -173,15 +173,7 @@ void SimpleCubeApplication::Render(RenderContext context)
 				memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
 			context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
 		}
-
-		if (m_quadModel.HasIndicies())
-		{
-			context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
-		}
-		else
-		{
-			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
-		}
+		m_quadModel.Draw(&context);
 	}
 	//draw quad 2(white)
 	   {
@@ -207,14 +199,7 @@ void SimpleCubeApplication::Render(RenderContext context)
 				context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
 			}
 		}
-		if (m_quadModel.HasIndicies())
-		{
-			context.m_mainContext->DrawIndexed(m_quadModel.GetIndiciesCount(), 0, 0);
-		}
-		else
-		{
-			context.m_mainContext->Draw(m_quadModel.GetVertexCount(), 0);
-		}
+		m_quadModel.Draw(&context);
 	}
 	m_swapchain.Present();
 }

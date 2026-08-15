@@ -1,5 +1,5 @@
 #include"Model.h"
-
+#include"Dx11RenderContext.h"
 void Model::SetVertexData(std::vector<VertexBase*>& verticies, bool buildRawVertexData)
 {
 	m_verticies = verticies;
@@ -67,4 +67,20 @@ unsigned int Model::GetIndiciesCount()
 		return m_indicies.size();
 	}
 	return 0;
+}
+
+void Model::Draw(RenderContext* context)
+{
+	if (context == nullptr)
+	{
+		return;
+	}
+	if (HasIndicies())
+	{
+		context->m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);
+	}
+	else
+	{
+		context->m_mainContext->Draw(GetVertexCount(), 0);
+	}
 }
