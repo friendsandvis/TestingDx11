@@ -65,8 +65,11 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 			DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 			DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 			m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos,targetPos,upDir);
+			m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
 			m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(),m_swapchain.GetHeight(), 0.1f, 100.0f);
+			m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
 			m_VertexConstantBufferData.modelMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+			m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
 			D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
 			vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
 			vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
