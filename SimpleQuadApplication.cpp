@@ -124,15 +124,6 @@ void SimpleQuadApplication::Render(RenderContext context)
 	context.m_mainContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH, 1.0f, 0);
 	//----pipeline states
 	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//calculate  add stride and offset based on hardcoded assumption of using VertexVersion0 get from vertexdata used for triangle rendering.
-	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(VertexVersion::VERTEXVERSION0);
-	UINT v_stride = vertInfo.stride;
-	UINT v_offset = 0;
-	context.m_mainContext->IASetVertexBuffers(0, 1, m_quadModel.GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
-	if (m_quadModel.HasIndicies())
-	{
-		context.m_mainContext->IASetIndexBuffer(m_quadModel.GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
-	}
 	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
 	context.m_mainContext->RSSetState(m_rasterState.Get());
 	context.m_mainContext->OMSetBlendState(m_blendState.Get(), nullptr, 0xffffffff);
