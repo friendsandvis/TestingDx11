@@ -109,6 +109,6 @@ void SimpleTriangleApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
-	context.m_mainContext->Draw(m_triangleModel.GetVertexCount(), 0);
+	m_triangleModel.Draw(&context);
 	m_swapchain.Present();
 }
