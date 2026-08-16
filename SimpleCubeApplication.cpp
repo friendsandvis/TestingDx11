@@ -60,6 +60,17 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 		blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	}
 	DXASSERT(device->CreateBlendState(&blendDesc, m_blendState.GetAddressOf()))
+		//camera setup
+	{
+		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
+		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+		float nearPlane = 0.01f;
+		float farPlane = 100.0f;
+		float viewWidth = static_cast<float>(m_swapchain.GetWidth());
+		float viewHeight = static_cast<float>(m_swapchain.GetHeight());
+		m_Maincamera.Reset(camPos,targetPos, viewWidth, viewHeight, nearPlane, farPlane);
+		m_maincameracontroller.SetCameratoControl(&m_Maincamera);
+	}
 		//constant buffer
 	{
 		PSConstantBuffer testConstantBuffer;
@@ -81,12 +92,9 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixIdentity();
 		m_VertexConstantBufferData.projMat = DirectX::XMMatrixIdentity();
 		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixIdentity();
-		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
-		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-		DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos, targetPos, upDir);
+		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
 		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
-		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.01f, 100.0f);
+		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
 		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
 		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
 		m_VertexConstantBufferData.modelMat = scaleMat;
@@ -154,7 +162,7 @@ void SimpleCubeApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
-	RenderTestQuadsDepthCheck(context);
+	RenderCube(context);//RenderTestQuadsDepthCheck(context);
 	m_swapchain.Present();
 }
 
@@ -216,11 +224,15 @@ void SimpleCubeApplication::RenderCube(RenderContext& context)
 	{
 		D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
 		DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
-			XMMATRIX scaleMat = DirectX::XMMatrixScaling(5.0f, 5.0f, 1.0f);
+			XMMATRIX scaleMat = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f);
 		//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
 		XMMATRIX translateMat = DirectX::XMMatrixTranslation(-0.3f, 0.5f, 2.0f);
 		m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
 		m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
+		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
+		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
+		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
+		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
 		memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
 		context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
 	}
@@ -233,4 +245,14 @@ void SimpleCubeApplication::RenderCube(RenderContext& context)
 		context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
 	}
 	m_cubeModel.Draw(&context);
+}
+
+void SimpleCubeApplication::ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	m_maincameracontroller.ProcessWindowProcEvent(hwnd, uMsg, wParam, lParam);
+}
+
+void SimpleCubeApplication::PreRenderUpdate()
+{
+	m_maincameracontroller.Update();
 }

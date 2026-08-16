@@ -5,13 +5,16 @@
 #include"VertexData.h"
 #include"DX11Shader.h"
 #include"Model.h"
-
+#include"DXCamera.h"
+#include"CameraMovementManager.h"
 
 class SimpleCubeApplication : public DX11ApplicationManagerBase
 {
 public:
 	void Render(RenderContext context) override;
 	void InitExtras(ComPtr<ID3D11Device> device) override;
+	void ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)override;
+	void PreRenderUpdate() override;
 
 private:
 	struct PSConstantBuffer
@@ -24,6 +27,7 @@ private:
 		DirectX::XMMATRIX projMat;
 		DirectX::XMMATRIX modelMat;
 	};
+
 	Model m_quadModel;
 	Model m_cubeModel;
 	DX11Shader m_simpleVertexShader;
@@ -37,6 +41,8 @@ private:
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
+	DXCamera m_Maincamera;
+	DXFPSCameraController m_maincameracontroller;
 	void RenderTestQuadsDepthCheck(RenderContext& context);
 	void RenderCube(RenderContext& context);
 };

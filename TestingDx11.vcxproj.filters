@@ -72,6 +72,12 @@
     <ClCompile Include="SimpleCubeApplication.cpp">
       <Filter>applications</Filter>
     </ClCompile>
+    <ClCompile Include="DXCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraMovementManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -133,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="SimpleCubeApplication.h">
       <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="DXCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraMovementManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

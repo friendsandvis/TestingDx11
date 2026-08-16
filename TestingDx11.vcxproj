@@ -127,11 +127,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicModelManager.cpp" />
+    <ClCompile Include="CameraMovementManager.cpp" />
     <ClCompile Include="ClearScreenApplication.cpp" />
     <ClCompile Include="Dx11ApplicationManagerBase.cpp" />
     <ClCompile Include="Dx11Buffer.cpp" />
     <ClCompile Include="Dx11Manager.cpp" />
     <ClCompile Include="DX11Shader.cpp" />
+    <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXShaderCompiler.cpp" />
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="FXShaderCompiler.cpp" />
@@ -147,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicModelManager.h" />
+    <ClInclude Include="CameraMovementManager.h" />
     <ClInclude Include="ClearScreenApplication.h" />
     <ClInclude Include="Dx11ApplicationManagerBase.h" />
     <ClInclude Include="Dx11Buffer.h" />
@@ -154,6 +157,7 @@
     <ClInclude Include="DX11Common.h" />
     <ClInclude Include="Dx11RenderContext.h" />
     <ClInclude Include="DX11Shader.h" />
+    <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXShaderCompiler.h" />
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="FXShaderCompiler.h" />
