@@ -86,7 +86,7 @@ void SimpleCubeApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DirectX::XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixLookAtLH(camPos, targetPos, upDir);
 		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
-		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.0f, 9.5f);
+		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.01f, 100.0f);
 		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
 		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
 		m_VertexConstantBufferData.modelMat = scaleMat;
@@ -213,5 +213,24 @@ void SimpleCubeApplication::RenderTestQuadsDepthCheck(RenderContext& context)
 
 void SimpleCubeApplication::RenderCube(RenderContext& context)
 {
-
+	{
+		D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+		DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+			XMMATRIX scaleMat = DirectX::XMMatrixScaling(5.0f, 5.0f, 1.0f);
+		//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
+		XMMATRIX translateMat = DirectX::XMMatrixTranslation(-0.3f, 0.5f, 2.0f);
+		m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
+		m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
+		memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
+		context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+	}
+	{
+		PSConstantBuffer pixelConstantBufferData;
+		pixelConstantBufferData.colour = { 1.0f,1.0f,1.0f,1.0f };
+		D3D11_MAPPED_SUBRESOURCE pixelConstBufferMapped = {};
+		DXASSERT(context.m_mainContext->Map(m_psConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &pixelConstBufferMapped))
+			memcpy(pixelConstBufferMapped.pData, &pixelConstantBufferData, sizeof(PSConstantBuffer));
+		context.m_mainContext->Unmap(m_psConstantBuffer.Get(), 0);
+	}
+	m_cubeModel.Draw(&context);
 }
