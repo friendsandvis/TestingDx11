@@ -109,7 +109,7 @@ void DXFPSCameraController::ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM 
 			}
 			float sensitivity = 0.1f;
 			int xoffset = xpos - m_lastmouseXpos;
-			int yoffset = m_lastmouseYpos - ypos;
+			int yoffset =  ypos - m_lastmouseYpos;
 			m_lastmouseXpos = xpos;
 			m_lastmouseYpos = ypos;
 			float yawoffset = sensitivity * xoffset;

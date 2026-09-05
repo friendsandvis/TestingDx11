@@ -1,5 +1,70 @@
 #include"BasicModelManager.h"
+/*
+cube verticies
+Vertex cubeVertices[] = {
+	// Front Face (Z = -0.5)
+	{ {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ { 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ {-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} }, // Bottom-Left
 
+	// Back Face (Z = 0.5)
+	{ { 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ {-0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ {-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ { 0.5f, -0.5f,  0.5f}, {0.0f, 1.0f} }, // Bottom-Left
+
+	// Top Face (Y = 0.5)
+	{ {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f} }, // Bottom-Left
+
+	// Bottom Face (Y = -0.5)
+	{ {-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ {-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f} }, // Bottom-Left
+
+	// Left Face (X = -0.5)
+	{ {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ {-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ {-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ {-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f} }, // Bottom-Left
+
+	// Right Face (X = 0.5)
+	{ { 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f} }, // Top-Left
+	{ { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f} }, // Top-Right
+	{ { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f} }, // Bottom-Right
+	{ { 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} }  // Bottom-Left
+};
+unsigned int cubeIndices[] = {
+	// Front Face
+	0, 1, 2,
+	0, 2, 3,
+
+	// Back Face
+	4, 5, 6,
+	4, 6, 7,
+
+	// Top Face
+	8, 9, 10,
+	8, 10, 11,
+
+	// Bottom Face
+	12, 13, 14,
+	12, 14, 15,
+
+	// Left Face
+	16, 17, 18,
+	16, 18, 19,
+
+	// Right Face
+	20, 21, 22,
+	20, 22, 23
+};
+
+*/
 void BasicModelManager::GetTriangleModelVerticies(std::vector<VertexBase*>& outverticies,VertexVersion vertexTypeToBuild)
 {
 	assert(vertexTypeToBuild == VertexVersion::VERTEXVERSION0);

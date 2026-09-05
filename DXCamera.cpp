@@ -36,8 +36,13 @@ XMMATRIX DXCamera::GetProjectionMat(bool ortho)
 XMMATRIX DXCamera::GetViewMat()
 {
 	//use the way based on macro of updateway maybe.
-	//return DirectX::XMMatrixLookAtLH(m_camerapos, m_cameraTargetpos, m_upDir);
-	return XMMatrixLookAtLH(m_camerapos, m_camerapos + m_forwardDir, m_upDir);
+	return DirectX::XMMatrixLookAtLH(m_camerapos, m_cameraTargetpos, m_upDir);
+	XMVECTOR focusPos = m_camerapos + m_forwardDir;
+	XMFLOAT4 extracted_focusPos;
+	XMStoreFloat4(&extracted_focusPos, focusPos);
+	//XMVECTOR test_camerapos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
+	//XMVECTOR test_targetpos = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	//return XMMatrixLookAtLH(m_camerapos, focusPos , m_upDir);
 }
 
 void DXCamera::Reset(XMVECTOR camPos, XMVECTOR camTargetPos, float viewWidth, float viewHeight, float nearPlane, float farPlane)
@@ -49,6 +54,8 @@ void DXCamera::Reset(XMVECTOR camPos, XMVECTOR camTargetPos, float viewWidth, fl
 	m_NearPlane = nearPlane;
 	m_FarPlane = farPlane;
 	SetAspectRatio(viewWidth, viewHeight);
+	m_forwardDir = XMVector3Normalize(m_cameraTargetpos - m_camerapos);
+	m_rightDir = XMVector3Cross(m_upDir, m_forwardDir);
 }
 
 void DXCamera::UpdateCameraVectors(float pitch, float yaw)
@@ -68,12 +75,17 @@ void DXCamera::UpdateCameraVectors(float pitch, float yaw)
 	XMVECTOR camToTargetVecResultant = camToTargetVec * camToTargetVecDistance;
 	m_cameraTargetpos = m_camerapos + camToTargetVecResultant;
 	m_forwardDir = XMVector3Normalize(m_cameraTargetpos - m_camerapos);
-	m_rightDir = XMVector3Cross(m_up, m_forwardDir);
+	m_rightDir = XMVector3Cross(m_upDir, m_forwardDir);
 #else
 	double x = cos(yawinrads) * cos(pitchinrads);
+	float xF = static_cast<float>(x);
 	double y = sin(pitchinrads);
+	float yF = static_cast<float>(y);
 	double z = sin(yawinrads) * cos(pitchinrads);
-	XMVECTOR newforward = XMVectorSet(x, y, z, 0.0f);
+	float zF = static_cast<float>(z);
+	XMVECTOR newforward = XMVectorSet(xF, yF, zF, 0.0f);
+	XMFLOAT4 newForwardExtract;
+	XMStoreFloat4(&newForwardExtract, newforward);
 	newforward = XMVector3Normalize(newforward);
 	m_forwardDir = newforward;
 	m_rightDir = XMVector3Cross(m_upDir, m_forwardDir);
