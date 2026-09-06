@@ -118,7 +118,7 @@ void DXFPSCameraController::ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM 
 			m_cameratocontrol->UpdateCameraVectors(pitchoffset, yawoffset);
 #else
 			m_camyaw -= sensitivity * xoffset;
-			m_campitch += sensitivity * yoffset;
+			m_campitch -= sensitivity * yoffset;
 			m_cameratocontrol->UpdateCameraVectors(m_campitch, m_camyaw);
 #endif // UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
 		}

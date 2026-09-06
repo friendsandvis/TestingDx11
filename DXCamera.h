@@ -1,10 +1,11 @@
 #pragma once
 #include"DX11Common.h"
-#define UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
+//#define UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
 /*
 * two techniques used to update camera vectors with Pitch and yaw angles.
 * 1. old does not update target position where pitch and yaw vector are used to calculate forwardvector directly by using sin & cos(target position is ignored)
 * 2. new where pitch & yaw are used to rotate previous camera vectors along CX & Y axis,target position is updated.
+* do note both varients use different way of interpreting mouse X,Y offset 1 as pitch yaw change directly and other with actual rotations.
 */
 class DXCamera
 {

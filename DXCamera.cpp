@@ -35,14 +35,12 @@ XMMATRIX DXCamera::GetProjectionMat(bool ortho)
 
 XMMATRIX DXCamera::GetViewMat()
 {
-	//use the way based on macro of updateway maybe.
+#ifdef UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
 	return DirectX::XMMatrixLookAtLH(m_camerapos, m_cameraTargetpos, m_upDir);
+#else
 	XMVECTOR focusPos = m_camerapos + m_forwardDir;
-	XMFLOAT4 extracted_focusPos;
-	XMStoreFloat4(&extracted_focusPos, focusPos);
-	//XMVECTOR test_camerapos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
-	//XMVECTOR test_targetpos = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
-	//return XMMatrixLookAtLH(m_camerapos, focusPos , m_upDir);
+	return XMMatrixLookAtLH(m_camerapos, focusPos , m_upDir);
+#endif // UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
 }
 
 void DXCamera::Reset(XMVECTOR camPos, XMVECTOR camTargetPos, float viewWidth, float viewHeight, float nearPlane, float farPlane)
