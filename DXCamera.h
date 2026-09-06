@@ -1,6 +1,6 @@
 #pragma once
 #include"DX11Common.h"
-//#define UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
+#define UPDATECAMERAVECTORTECHNIQUE_UPDATETARGETPOSITION
 /*
 * two techniques used to update camera vectors with Pitch and yaw angles.
 * 1. old does not update target position where pitch and yaw vector are used to calculate forwardvector directly by using sin & cos(target position is ignored)

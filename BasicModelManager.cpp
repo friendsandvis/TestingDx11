@@ -1,7 +1,11 @@
 #include"BasicModelManager.h"
-/*
-cube verticies
-Vertex cubeVertices[] = {
+struct PosUVVertex
+{
+	XMFLOAT3 pos;
+	XMFLOAT2 uv;
+};
+PosUVVertex cubeverticies[]=
+{
 	// Front Face (Z = -0.5)
 	{ {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f} }, // Top-Left
 	{ { 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f} }, // Top-Right
@@ -38,6 +42,7 @@ Vertex cubeVertices[] = {
 	{ { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f} }, // Bottom-Right
 	{ { 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f} }  // Bottom-Left
 };
+
 unsigned int cubeIndices[] = {
 	// Front Face
 	0, 1, 2,
@@ -63,8 +68,6 @@ unsigned int cubeIndices[] = {
 	20, 21, 22,
 	20, 22, 23
 };
-
-*/
 void BasicModelManager::GetTriangleModelVerticies(std::vector<VertexBase*>& outverticies,VertexVersion vertexTypeToBuild)
 {
 	assert(vertexTypeToBuild == VertexVersion::VERTEXVERSION0);
@@ -154,58 +157,15 @@ void BasicModelManager::GetQuadModelVerticiesIndexed(std::vector<VertexBase*>& o
 void BasicModelManager::GetCubeModelVerticiesIndexed(std::vector<VertexBase*>& outverticies, std::vector<unsigned int>& outindicies, VertexVersion vertexTypeToBuild)
 {
 	assert(vertexTypeToBuild == VertexVersion::VERTEXVERSION0);
-
-	//verticies
-	//0
-	VertexV0* vert = new VertexV0();
-	vert->m_position = { -1.0f, -1.0f, -1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//1
-	vert = new VertexV0();
-	vert->m_position = { -1.0f,  1.0f, -1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//2
-	vert = new VertexV0();
-	vert->m_position = { 1.0f,  1.0f, -1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//3
-	vert = new VertexV0();
-	vert->m_position = { 1.0f, -1.0f, -1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//4
-	vert = new VertexV0();
-	vert->m_position = { -1.0f,-1.0f, 1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//5
-	vert = new VertexV0();
-	vert->m_position = { -1.0f, 1.0f, 1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//6
-	vert = new VertexV0();
-	vert->m_position = { 1.0f, 1.0f, 1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-	//7
-	vert = new VertexV0();
-	vert->m_position = { 1.0f,-1.0f, 1.0f };
-	vert->m_uv = { 0.0,0.0f };
-	outverticies.push_back(vert);
-
-	//indicies
-	std::vector<unsigned>cubeindicies =
+	for (unsigned int idx : cubeIndices)
 	{
-		0, 1, 2, 0, 2, 3,
-		4, 6, 5, 4, 7, 6,
-		4, 5, 1, 4, 1, 0,
-		3, 2, 6, 3, 6, 7,
-		1, 5, 6, 1, 6, 2,
-		4, 0, 3, 4, 3, 7
-	};
-	outindicies = cubeindicies;
+		outindicies.push_back(idx);
+	}
+	for (PosUVVertex& vert : cubeverticies)
+	{
+		VertexV0* vert0 = new VertexV0();
+		vert0->m_position = vert.pos;
+		vert0->m_uv = vert.uv;
+		outverticies.push_back(vert0);
+	}
 }
