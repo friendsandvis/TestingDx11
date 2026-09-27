@@ -1,10 +1,13 @@
 #pragma once
+/*
+* need to add these files dx11 specific
 #include"AssimpManager.h"
 #include"DXUtils.h"
 #include"DX12Buffer.h"
 #include"DXVertexManager.h"
 #include"DXTexManager.h"
 #include"DX12Texture.h"
+*/
 #define SHADERTRANSFORMCONSTANTSSTRUCT ShaderTransformConstants_GeneralComplete 
 
 /*struct Vertex
