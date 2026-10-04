@@ -1,23 +1,22 @@
 #pragma once
-/*
-* need to add these files dx11 specific
+// need to add these files dx11 specific
 #include"AssimpManager.h"
 #include"DXUtils.h"
-#include"DX12Buffer.h"
+//#include"DX12Buffer.h"
 #include"DXVertexManager.h"
 #include"DXTexManager.h"
-#include"DX12Texture.h"
-*/
+//#include"DX12Texture.h"
+#include<vector>
 #define SHADERTRANSFORMCONSTANTSSTRUCT ShaderTransformConstants_GeneralComplete 
 
-/*struct Vertex
+struct Vertex
 {
 	float X;
 	float Y;
 	float Z;
 	float U;
 	float V;
-};*/
+};
 
 
 
@@ -137,10 +136,6 @@ public:
 	void Extratransform(XMMATRIX extratransformmat);
 	Model(ModelDataUploadMode uploadmode=NOCOPY);
 	~Model();
-	
-	
-	D3D12_GPU_VIRTUAL_ADDRESS GetVertexBufferGPUVirtualAddress();
-	D3D12_GPU_VIRTUAL_ADDRESS GetIndexBufferGPUVirtualAddress();
 	void Init(ComPtr< ID3D12Device> creationdevice,AssimpLoadedModel& assimpModel,UINT meshindexinassimpmodeltoload,VertexVersion modelvertexversion,bool supportmaterial =false);
 	void InitVertexBuffer(ComPtr< ID3D12Device> creationdevice,vector<VertexBase*>& verticies);
 	void InitIndexBuffer(ComPtr< ID3D12Device> creationdevice,vector<unsigned>& indicies);

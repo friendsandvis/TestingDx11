@@ -140,6 +140,7 @@
     <ClCompile Include="DXShaderCompiler.cpp" />
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="DXTexManager.cpp" />
+    <ClCompile Include="DXVertexManager.cpp" />
     <ClCompile Include="FXShaderCompiler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="DXTexManager.h" />
     <ClInclude Include="DXtexUtils.h" />
+    <ClInclude Include="DXVertexManager.h" />
     <ClInclude Include="FXShaderCompiler.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderable.h" />

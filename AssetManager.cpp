@@ -445,24 +445,6 @@ void Model::Init(ComPtr< ID3D12Device> creationdevice, AssimpLoadedModel& assimp
 	InitVertexBuffer(creationdevice, verticies);
 
 }
-
-D3D12_GPU_VIRTUAL_ADDRESS Model::GetVertexBufferGPUVirtualAddress()
-{
-	if (m_vertexbuffer.GetResource().Get())
-	{
-		return m_vertexbuffer.GetResource()->GetGPUVirtualAddress();
-	}
-	return NULL;
-}
-D3D12_GPU_VIRTUAL_ADDRESS Model::GetIndexBufferGPUVirtualAddress()
-{
-	if (m_indexbuffer.GetResource().Get())
-	{
-		return m_indexbuffer.GetResource()->GetGPUVirtualAddress();
-	}
-	return NULL;
-}
-
 void Model::GetVertexArray(vector<VertexBase*>& outverticies, AssimpLoadedMesh& ameshtoadd, VertexVersion vertversion)
 {
 	unsigned indexoffset = outverticies.size();
