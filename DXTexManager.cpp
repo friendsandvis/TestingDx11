@@ -57,5 +57,5 @@ DXTexture::DXTexture(std::wstring externalTexfileName)
 }
 bool DXTexture::Init(ComPtr<ID3D11Device> creationdevice)
 {
-
+	return true;
 }
