@@ -50,3 +50,12 @@ bool DXTexManager::LoadTexture(const wchar_t* imagefile, DXImageData& outloadedI
 
 	return(res == S_OK);
 }
+
+DXTexture::DXTexture(std::wstring externalTexfileName)
+{
+	m_TextureFileName = externalTexfileName;
+}
+bool DXTexture::Init(ComPtr<ID3D11Device> creationdevice)
+{
+
+}

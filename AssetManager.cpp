@@ -1,7 +1,7 @@
 #include"AssetManager.h"
-#include"DX12CommandList.h"
 #include"DXCamera.h"
-#include"DX12Buffer.h"
+#include<string>
+#include<set>
 //during model loading this macro is used to determine if we need to set rendering for non opaque models to allow rendering them or not.
 #define ALLOWRENDERINGNONOPAQUEMODELS true
 
@@ -1497,7 +1497,7 @@ void ModelMaterial::UploadTextures(DX12Commandlist& copycmdlist)
 		m_metalnesstexture->UploadTexture(copycmdlist);
 	}
 }
-void ModelMaterial::Init(ComPtr< ID3D12Device> creationdevice, bool allowTextureDataloading)
+void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloading)
 {
 	if (m_diffusetexture)
 	{

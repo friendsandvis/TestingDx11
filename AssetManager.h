@@ -42,7 +42,6 @@ struct ShaderTransformConstants_GeneralComplete
 
 //forwarddeclare
 struct CameraMatriciesData;
-class DX12Commandlist;
 /*
 * Imp terms
 * Load a texture means load from file the tex data/params
@@ -54,18 +53,18 @@ class ModelMaterial
 public:
 	struct TextureUploadInfo
 	{
-		DXTexture* texture = nullptr;
+		//DXTexture* texture = nullptr;
 		ModelMaterial* ModelMaterialholdingTexture = nullptr;
 		bool dataloaded = false;
 		bool textureInitialized = false;
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvCreationDescHandle;
+		//D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc;
+		//D3D12_CPU_DESCRIPTOR_HANDLE srvCreationDescHandle;
 		bool createSRVfrominfo = false;
 		bool needTextureInit = false;
 	};
-	void Init(ComPtr< ID3D12Device> creationdevice, bool allowTextureDataloading = false);
+	void Init(ComPtr<ID3D11Device> device, bool allowTextureDataloading = false);
 	//upload data to gpu resource.
-	void UploadTextures(DX12Commandlist& copycmdlist);
+	void UploadTextures();
 	//load from file the texture data imp:no texture resource creation here
 	void LoadDifuseTexture(std::wstring texname);
 	//load from file the texture data imp:no texture resource creation here
