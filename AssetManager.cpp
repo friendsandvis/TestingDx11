@@ -169,13 +169,14 @@ Model::~Model()
 		}
 	}
 }
-void Model::Draw(DX12Commandlist& renderingcmdlist,XMMATRIX vpmatrix, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+void Model::Draw(RenderContext context,XMMATRIX vpmatrix, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
 {
 	if (!m_Allowrender)
 	{
 		return;
 	}
-	renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
+	//set vertex buffer
+	//renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
 	XMMATRIX mvp = vpmatrix;
 	if (usemodelmatrix)
 	{
@@ -186,21 +187,109 @@ void Model::Draw(DX12Commandlist& renderingcmdlist,XMMATRIX vpmatrix, UINT mvpma
 	
 	if (setmvpmatrix)
 	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts)/4, &m_shadertransformconsts, 0);
+		//set transform constant
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts)/4, &m_shadertransformconsts, 0);
 
 	}
 	if (supportmaterial)
 	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
+		//set material constants
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
 	}
 	if (HasIndexBuffer())
 	{
-		renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
-		renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
+		//set index buffer
+		//renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
+		//draw indexed call
+		//renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
 	}
 	else
 	{
-		renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
+		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
+	}
+}
+void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+{
+	if (!m_Allowrender)
+	{
+		return;
+	}
+	//set vertex buffer
+	//renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
+	XMMATRIX mvp = camMatData.vpMat;
+	if (usemodelmatrix)
+	{
+		mvp = XMMatrixMultiply(m_transform, camMatData.vpMat);
+	}
+	m_shadertransformconsts.mvp = mvp;
+	m_shadertransformconsts.model = m_transform;
+	m_shadertransformconsts.view = camMatData.viewMat;
+	m_shadertransformconsts.projection = camMatData.projectionMat;
+
+	if (setmvpmatrix)
+	{
+		//set shader transform constants
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts) / 4, &m_shadertransformconsts, 0);
+
+	}
+	if (supportmaterial)
+	{
+		//set materiel constants
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
+	}
+	if (HasIndexBuffer())
+	{
+		//set index buffer
+		//renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
+		// //indexed draw call
+		//renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
+	}
+	else
+	{
+		//draw call for non indexed
+		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
+	}
+}
+
+void Model::Draw(RenderContext context, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+{
+	if (!m_Allowrender)
+	{
+		return;
+	}
+	//set vertex buffer
+	//renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
+	XMMATRIX mvp = camData.vpMat;
+	if (usemodelmatrix)
+	{
+		mvp = XMMatrixMultiply(m_transform, camData.vpMat);
+	}
+	m_shadertransformconsts.mvp = mvp;
+	m_shadertransformconsts.model = m_transform;
+	m_shadertransformconsts.view = camData.viewMat;
+	m_shadertransformconsts.projection = camData.projectionMat;
+	CameraMatriciesData camConstData;
+
+	//update buffer for camconst
+	{
+		BasicModelManager::UpdateCamConstBufferForModel(*this, m_shadertransformconsts, camConstBuffer);
+	}
+	if (supportmaterial)
+	{
+		//set mat constants
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
+	}
+	if (HasIndexBuffer())
+	{
+		//set index buffer
+		//renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
+		// indexed draw call
+		//renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
+	}
+	else
+	{
+		//draw call for non indexed
+		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
 	}
 }
 void Model::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
@@ -239,79 +328,6 @@ void Model::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camMatDa
 		renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
 	}
 }
-
-void Model::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
-{
-	if (!m_Allowrender)
-	{
-		return;
-	}
-	renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
-	XMMATRIX mvp = camData.vpMat;
-	if (usemodelmatrix)
-	{
-		mvp = XMMatrixMultiply(m_transform, camData.vpMat);
-	}
-	m_shadertransformconsts.mvp = mvp;
-	m_shadertransformconsts.model = m_transform;
-	m_shadertransformconsts.view = camData.viewMat;
-	m_shadertransformconsts.projection = camData.projectionMat;
-	CameraMatriciesData camConstData;
-
-	//update buffer for camconst
-	{
-		BasicModelManager::UpdateCamConstBufferForModel(*this, m_shadertransformconsts, camConstBuffer);
-	}
-	if (supportmaterial)
-	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
-	}
-	if (HasIndexBuffer())
-	{
-		renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
-		renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
-	}
-	else
-	{
-		renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
-	}
-}
-/*void Model::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
-{
-	if (!m_Allowrender)
-	{
-		return;
-	}
-	renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
-	XMMATRIX mvp = camMatData.vpMat;
-	if (usemodelmatrix)
-	{
-		mvp = XMMatrixMultiply(m_transform, camMatData.vpMat);
-	}
-	m_shadertransformconsts.mvp = mvp;
-	m_shadertransformconsts.model = m_transform;
-	m_shadertransformconsts.view = camMatData.viewMat;
-	m_shadertransformconsts.projection = camMatData.projectionMat;
-
-	if (setmvpmatrix)
-	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts) / 4, &m_shadertransformconsts, 0);
-
-	}
-	if (supportmaterial)
-	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
-	}
-	if (HasIndexBuffer())
-	{
-		renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
-		renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
-	}
-	else
-	{
-		renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
-	}
-}*/
 void Model::Extratransform(XMMATRIX extratransformmat)
 {
 	//m_transform = XMMatrixMultiply(extratransformmat, m_transform);

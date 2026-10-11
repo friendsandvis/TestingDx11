@@ -1,4 +1,4 @@
-#include"DX12Texture.h"
+#include"DX11Texture.h"
 #include"DXTexManager.h"
 
 
