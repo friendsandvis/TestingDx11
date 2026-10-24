@@ -1,7 +1,8 @@
 #pragma once
 #include"DX11Common.h"
+#include"DX11Resource.h"
 
-class DX11Buffer
+class DX11Buffer : public DX11Resource
 {
 public:
 	void Init(ComPtr<ID3D11Device> device, D3D11_BUFFER_DESC desc,D3D11_SUBRESOURCE_DATA initData);
