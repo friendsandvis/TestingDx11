@@ -3,4 +3,4 @@
 class DX11Resource
 {
 
-}
+};
