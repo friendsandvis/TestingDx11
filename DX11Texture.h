@@ -1,7 +1,7 @@
 #pragma once
 #include"DX11Resource.h"
 #include"DX11Buffer.h"
-
+#include<vector>
 //forward declare dximagedata
 struct DXImageData;
 /*struct TextureCreationProperties
@@ -23,7 +23,7 @@ public:
 
 };
 
-class DX12TextureUploadeHelper
+/*class DX12TextureUploadeHelper
 {
 public:
 	DX12TextureUploadeHelper();
@@ -55,7 +55,7 @@ public:
 	void PrepareUpload(ComPtr< ID3D12Device> creationdevice, DX12ResourceBase* targettexture,UINT firstsubres=0,UINT subrescount=1);
 	void SetTextureData();
 	void SetUploadData();
-	vector<uint8_t>& GetSubResourceDataforUpdate (UINT subresIndex=0);
+	std::vector<uint8_t>& GetSubResourceDataforUpdate (UINT subresIndex=0);
 	void Upload(DX12Commandlist cmdlist);
 private:
 	DX12ResourceBase* m_targettexture;
@@ -65,5 +65,5 @@ private:
 	UINT m_subresoucecount;
 	vector<uint8_t>* m_subresdata;
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT* m_subresplacedfootprints;
-};
+};*/
 

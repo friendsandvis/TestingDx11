@@ -11,7 +11,7 @@ DX12TextureSimple::~DX12TextureSimple()
 
 }
 
-DX12TextureUploadeHelper::DX12TextureUploadeHelper()
+/*DX12TextureUploadeHelper::DX12TextureUploadeHelper()
 	:m_subresoucecount(0),
 	m_subresplacedfootprints(nullptr),
 	m_subresrowcount(nullptr),
@@ -34,7 +34,7 @@ DX12TextureUploadeHelper::~DX12TextureUploadeHelper()
 	}
 }
 
-void DX12TextureUploadeHelper::PrepareUpload(ComPtr< ID3D12Device> creationdevice,DX12ResourceBase* targettexture)
+void DX12TextureUploadeHelper::PrepareUpload(ComPtr< ID3D11Device> creationdevice,DX12ResourceBase* targettexture)
 
 {
 	UINT64 baseoffset = 0;
@@ -127,10 +127,10 @@ void DX12TextureUploadeHelper::SetUploadTextureData(const DXImageData& imagedata
 		for (size_t i1 = 0; i1 < subresrowcount; i1++)
 		{
 			
-			/*memcpy(dst, src, subresrowsize);
+			memcpy(dst, src, subresrowsize);
 			//increment src and dst to next row
 			dst += subresrowsize;
-			src = src += subresrowsize;*/
+			src = src += subresrowsize;
 			UINT64 copysize = min(srcrowsize, dstrowsize);
 			memcpy(dst, src, copysize);
 			//increment src and dst to next row
@@ -277,4 +277,4 @@ void DX12TextureUploadHelperSimple::Upload(DX12Commandlist cmdlist)
 
 	barrier = m_targettexture->TransitionResState(D3D12_RESOURCE_STATE_COMMON);
 	cmdlist->ResourceBarrier(1, &barrier);
-}
+}*/
