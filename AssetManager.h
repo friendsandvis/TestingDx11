@@ -3,11 +3,12 @@
 #include"AssimpManager.h"
 #include"DX11Common.h"
 #include"Dx11RenderContext.h"
-//#include"DX12Buffer.h"
+//#include"DX11Buffer.h"
 #include"DXVertexManager.h"
 #include"DXTexManager.h"
 //#include"DX12Texture.h"
 #include<vector>
+#include"DX11Buffer.h"
 #define SHADERTRANSFORMCONSTANTSSTRUCT ShaderTransformConstants_GeneralComplete 
 
 struct Vertex
@@ -132,13 +133,13 @@ public:
 	XMMATRIX GetTransform() { return m_transform; }
 	void Draw(RenderContext context, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex,UINT materialconstsrootparamindex,bool usemodelmatrix=true,bool setmvpmatrix=true,bool supportmaterial=false,unsigned int instanceCount = 1);
 	void Draw(RenderContext context, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
-	void Draw(RenderContext context, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
+	void Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
 	void Extratransform(XMMATRIX extratransformmat);
 	Model(ModelDataUploadMode uploadmode=NOCOPY);
 	~Model();
-	void Init(ComPtr< ID3D12Device> creationdevice,AssimpLoadedModel& assimpModel,UINT meshindexinassimpmodeltoload,VertexVersion modelvertexversion,bool supportmaterial =false);
-	void InitVertexBuffer(ComPtr< ID3D12Device> creationdevice,vector<VertexBase*>& verticies);
-	void InitIndexBuffer(ComPtr< ID3D12Device> creationdevice,vector<unsigned>& indicies);
+	void Init(ComPtr< ID3D11Device> creationdevice,AssimpLoadedModel& assimpModel,UINT meshindexinassimpmodeltoload,VertexVersion modelvertexversion,bool supportmaterial =false);
+	void InitVertexBuffer(ComPtr< ID3D11Device> creationdevice,vector<VertexBase*>& verticies);
+	void InitIndexBuffer(ComPtr< ID3D11Device> creationdevice,vector<unsigned>& indicies);
 	inline D3D12_INDEX_BUFFER_VIEW GetIBView() { return m_indexbufferview; }
 	inline D3D12_VERTEX_BUFFER_VIEW GetVBView() { return m_vertexbufferview; }
 	void UploadModelDatatoBuffers();
@@ -173,7 +174,7 @@ public:
 private:
 	SHADERTRANSFORMCONSTANTSSTRUCT m_shadertransformconsts;
 	XMMATRIX m_transform;
-	DX12Buffer m_vertexbuffer, m_indexbuffer,m_vertexuploadbuffer,m_indexuploadbuffer;
+	DX11Buffer m_vertexbuffer, m_indexbuffer,m_vertexuploadbuffer,m_indexuploadbuffer;
 	//verticies are all of a single specialized vertex type and they are all dynamically allocated.
 	VertexVersion m_vertexversion;
 	vector<VertexBase*> m_verticies;
@@ -196,7 +197,7 @@ private:
 	unsigned m_tmpmaterialgpuindex,m_diffusetexidx;
 	void GetVertexArray(vector<VertexBase*>& outverticies, AssimpLoadedMesh& ameshtoadd,VertexVersion vertversion);
 	void BuildVertexRawData();
-	void InitMaterial(ComPtr< ID3D12Device> creationdevice, wstring texfilepath);
+	void InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepath);
 	bool HasTransparentMaterial(wstring texfilepath);
 };
 //contains various basic models
@@ -207,7 +208,7 @@ public:
 	void Extratransform(XMMATRIX extratransformmat);
 	void Draw(DX12Commandlist& renderingcmdlist, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex=2, bool drawOpaque = true,bool drawNonOpaque = true);
 	void Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
-	void Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
+	void Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
 	void UploadModelDatatoBuffers();
 	void UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist);
 	void UploadModelDataDefaultTexture(DX12Commandlist& copycmdlist);
@@ -218,7 +219,7 @@ public:
 	DX12DESCHEAP& GetResourceviewHeap() { return m_resourceviewheap; }
 	CompoundModel(ModelDataUploadMode uploadmode = NOCOPY);
 	~CompoundModel();
-	void Init(ComPtr< ID3D12Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion,bool supportmaterial=false);
+	void Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion,bool supportmaterial=false);
 	void AddModel(Model* abasicModel) { m_models.push_back(abasicModel); }
 	void SetTexPath(wstring texfilesPath) { m_texfilepath = texfilesPath; }
 	wstring GetTexPath() { return m_texfilepath; }
@@ -229,12 +230,12 @@ public:
 	DX12DESCHEAP m_resourceviewheap;
 	DX12TextureSimple m_whitetexture;
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT m_whitetexsubresfootprint;
-	DX12Buffer m_whitetexuploadbuffer;
+	DX11Buffer m_whitetexuploadbuffer;
 	vector< DXTexture*> m_texturestoupload;
 	vector< ModelMaterial::TextureUploadInfo> m_textureuploadInfos;
 	
 	std::vector<MaterialDataGPU> m_allmaterialsused;
-	DX12Buffer m_materialtable;
+	DX11Buffer m_materialtable;
 	wstring m_texfilepath = L"";
 	//local textures upload helper utils
 	size_t m_currenttexidxtoupload;
@@ -243,10 +244,10 @@ public:
 	bool SupportMaterial() { return m_supportmaterial; }
 	bool SupportNonOpaqueMaterial() { return m_supportNonOpaqueMaterial; }
 	void UploadCurrentFrameModelTextureData(DX12Commandlist& copycmdlist,bool increment =true);
-	void UploadCurrentFrameModelTextureData(ComPtr< ID3D12Device> creationdevice, DX12Commandlist& copycmdlist, bool increment = true);
+	void UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> creationdevice, DX12Commandlist& copycmdlist, bool increment = true);
 	void UploadAllModelTextureData(DX12Commandlist& copycmdlist);
-	void UploadAllModelTextureData(ComPtr< ID3D12Device> creationdevice,  DX12Commandlist& copycmdlist);
-	void UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo,ComPtr< ID3D12Device> creationdevice, DX12Commandlist& copycmdlist);
+	void UploadAllModelTextureData(ComPtr< ID3D11Device> creationdevice,  DX12Commandlist& copycmdlist);
+	void UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo,ComPtr< ID3D11Device> creationdevice, DX12Commandlist& copycmdlist);
 	bool NeedToUploadTextures() { return (m_currenttexidxtoupload<m_texturestoupload.size()); }
 	bool NeedToUploadTextureInfos() { return (m_currenttexidxtoupload < m_textureuploadInfos.size()); }
 private:
@@ -256,16 +257,16 @@ private:
 class BasicModelManager
 {
 public:
-	static void InitPlaneModel(ComPtr< ID3D12Device> creationdevice, Model& planemodel);
-	static void InitCubeModel(ComPtr< ID3D12Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion = VertexVersion::VERTEXVERSION0);
-	static void InitTriangleModel(ComPtr< ID3D12Device> creationdevice, Model& trianglemodel);
-	static void LoadModel(ComPtr< ID3D12Device> creationdevice,std::string modelfilepath, Model& outmodel, VertexVersion requiredvertexversion);
-	static void LoadModel(ComPtr< ID3D12Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath = L"", bool supportmaterial = false);
+	static void InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Model& planemodel);
+	static void InitCubeModel(ComPtr< ID3D11Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion = VertexVersion::VERTEXVERSION0);
+	static void InitTriangleModel(ComPtr< ID3D11Device> creationdevice, Model& trianglemodel);
+	static void LoadModel(ComPtr< ID3D11Device> creationdevice,std::string modelfilepath, Model& outmodel, VertexVersion requiredvertexversion);
+	static void LoadModel(ComPtr< ID3D11Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath = L"", bool supportmaterial = false);
 	static void GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertexdata);
 	static D3D12_ROOT_PARAMETER BuildBasicCameraDataRootConstantParameterCommon(bool initAsdescriptor = true);
-	static void UpdateCamConstBufferForModel(Model& aModel, const CameraMatriciesData& camMatData, DX12Buffer& camConstBuffer);
-	static void UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX12Buffer& camConstBuffer);
-	static void InitCamConstBuffer(ComPtr< ID3D12Device> creationDevice, DX12Buffer& camConstBuffer);
+	static void UpdateCamConstBufferForModel(Model& aModel, const CameraMatriciesData& camMatData, DX11Buffer& camConstBuffer);
+	static void UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX11Buffer& camConstBuffer);
+	static void InitCamConstBuffer(ComPtr< ID3D11Device> creationDevice, DX11Buffer& camConstBuffer);
 private:
 	static void GetPlaneVerticiesV0(vector<VertexBase*>& outverticies);
 	static void GetCubeVerticiesV0(vector<VertexBase*>& outverticies);

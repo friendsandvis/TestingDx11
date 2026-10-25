@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AssimpManager.cpp" />
     <ClCompile Include="BasicModelManager.cpp" />
     <ClCompile Include="CameraMovementManager.cpp" />
     <ClCompile Include="ClearScreenApplication.cpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AssimpManager.h" />
     <ClInclude Include="BasicModelManager.h" />
     <ClInclude Include="CameraMovementManager.h" />
     <ClInclude Include="ClearScreenApplication.h" />
