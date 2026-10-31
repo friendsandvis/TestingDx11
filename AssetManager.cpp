@@ -1364,8 +1364,8 @@ void BasicModelManager::GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertex
 	}
 }
 
-D3D12_ROOT_PARAMETER BasicModelManager::BuildBasicCameraDataRootConstantParameterCommon(bool initAsdescriptor)
-{
+void BasicModelManager::BuildBasicCameraDataRootConstantParameterCommon()
+{/*
 
 	D3D12_ROOT_PARAMETER rootParamCamConst = {};
 	//init as 32 bit const
@@ -1403,9 +1403,9 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Camera
 	memcpy(camConstBuffMapped, &camConstData, camConstBuffer.GetSize());
 	camConstBuffer.UnMap(camConstwriteparams);
 
-}
+*/}
 
-void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX12Buffer& camConstBuffer)
+void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX11Buffer& camConstBuffer)
 {
 	//update data in buffer
 	BufferMapParams camConstwriteparams = {};
@@ -1416,7 +1416,7 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Shader
 	camConstBuffer.UnMap(camConstwriteparams);
 
 }
-void BasicModelManager::InitCamConstBuffer(ComPtr< ID3D12Device> creationDevice, DX12Buffer& camConstBuffer)
+void BasicModelManager::InitCamConstBuffer(ComPtr< ID3D11Device> creationDevice, DX11Buffer& camConstBuffer)
 {
 	DX12ResourceCreationProperties camConstDataBufferProps;
 	DX12Buffer::InitResourceCreationProperties(camConstDataBufferProps);
