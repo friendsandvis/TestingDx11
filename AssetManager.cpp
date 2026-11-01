@@ -251,7 +251,7 @@ void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvp
 	}
 }
 
-void Model::Draw(RenderContext context, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+void Model::Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
 {
 	if (!m_Allowrender)
 	{
@@ -292,7 +292,7 @@ void Model::Draw(RenderContext context, CameraMatriciesData camData, DX12Buffer&
 		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
 	}
 }
-void Model::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
 {
 	if (!m_Allowrender)
 	{
@@ -557,7 +557,7 @@ void Model::UploadModelDatatoBuffers()
 	}
 }
 
-void Model::UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist)
+void Model::UploadModelDatatoGPUBuffers(RenderContext context)
 
 {
 	if (m_uploadmode != COPY)
@@ -583,11 +583,11 @@ void Model::UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist)
 	}
 
 }
-void Model::UploadModelTextureData(DX12Commandlist& copycmdlist)
+void Model::UploadModelTextureData(RenderContext context)
 {
 	m_loadedmaterial.UploadTextures(copycmdlist);
 }
-void Model::TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist)
+/*void Model::TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist)
 {
 	//transition vertexbuffer to state
 	D3D12_RESOURCE_BARRIER barrier=m_vertexbuffer.TransitionResState(state);
@@ -601,7 +601,7 @@ void Model::TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, Com
 	{
 		cmdlist->ResourceBarrier(1, &barrier);
 	}
-}
+}*/
 void Model::InitMaterial(ComPtr< ID3D12Device> creationdevice, wstring texfilepath)
 {
 	m_loadedmaterial.SetTexPath(texfilepath);
@@ -696,7 +696,7 @@ CompoundModel::~CompoundModel()
 		delete m_models[i];
 	}
 }
-void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, XMMATRIX vpmatrix, UINT mvpmatrixrootparamindex,UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
+void CompoundModel::Draw(RenderContext context, XMMATRIX vpmatrix, UINT mvpmatrixrootparamindex,UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
 {
 	vector<Model*> opaqueModels, nonOpaqueModels;
 	for (size_t i = 0; i < m_models.size(); i++)
@@ -716,7 +716,7 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, XMMATRIX vpmatrix, U
 	{
 		for (size_t i = 0; i < opaqueModels.size(); i++)
 		{
-			opaqueModels[i]->Draw(renderingcmdlist, vpmatrix, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
+			opaqueModels[i]->Draw(context, vpmatrix, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 		//draw nonopaque models
@@ -724,11 +724,11 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, XMMATRIX vpmatrix, U
 	{
 		for (size_t i = 0; i < nonOpaqueModels.size(); i++)
 		{
-			nonOpaqueModels[i]->Draw(renderingcmdlist, vpmatrix, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
+			nonOpaqueModels[i]->Draw(context, vpmatrix, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 }
-void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
+void CompoundModel::Draw(RenderContext context, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
 {
 	vector<Model*> opaqueModels, nonOpaqueModels;
 	for (size_t i = 0; i < m_models.size(); i++)
@@ -748,7 +748,7 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData 
 	{
 		for (size_t i = 0; i < opaqueModels.size(); i++)
 		{
-			opaqueModels[i]->Draw(renderingcmdlist, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
+			opaqueModels[i]->Draw(context, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 	//draw nonopaque models
@@ -756,12 +756,12 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData 
 	{
 		for (size_t i = 0; i < nonOpaqueModels.size(); i++)
 		{
-			nonOpaqueModels[i]->Draw(renderingcmdlist, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
+			nonOpaqueModels[i]->Draw(context, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 }
 
-void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, DX12Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
+void CompoundModel::Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool drawOpaque, bool drawNonOpaque)
 {
 	vector<Model*> opaqueModels, nonOpaqueModels;
 	for (size_t i = 0; i < m_models.size(); i++)
@@ -781,7 +781,7 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData 
 	{
 		for (size_t i = 0; i < opaqueModels.size(); i++)
 		{
-			opaqueModels[i]->Draw(renderingcmdlist, camData, camConstBuffer, materialconstsrootparamindex, true, true, m_supportmaterial);
+			opaqueModels[i]->Draw(context, camData, camConstBuffer, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 	//draw nonopaque models
@@ -789,7 +789,7 @@ void CompoundModel::Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData 
 	{
 		for (size_t i = 0; i < nonOpaqueModels.size(); i++)
 		{
-			nonOpaqueModels[i]->Draw(renderingcmdlist, camData, camConstBuffer, materialconstsrootparamindex, true, true, m_supportmaterial);//->Draw(renderingcmdlist, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
+			nonOpaqueModels[i]->Draw(context, camData, camConstBuffer, materialconstsrootparamindex, true, true, m_supportmaterial);//->Draw(renderingcmdlist, camData, mvpmatrixrootparamindex, materialconstsrootparamindex, true, true, m_supportmaterial);
 		}
 	}
 }
@@ -808,15 +808,15 @@ void CompoundModel::UploadModelDatatoBuffers()
 		m_models[i]->UploadModelDatatoBuffers();
 	}
 }
-void CompoundModel::UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist)
+void CompoundModel::UploadModelDatatoGPUBuffers(RenderContext context)
 {
-	for (size_t i = 0; i < m_models.size(); i++)
+	/*for (size_t i = 0; i < m_models.size(); i++)
 	{
 		m_models[i]->UploadModelDatatoGPUBuffers(copycmdlist);
-	}
+	}*/
 }
-void CompoundModel::UploadModelDataDefaultTexture(DX12Commandlist& copycmdlist)
-{
+void CompoundModel::UploadModelDataDefaultTexture(RenderContext context)
+{/*
 	D3D12_RESOURCE_BARRIER abarrier = m_whitetexuploadbuffer.TransitionResState(D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_SOURCE);
 	if (DXUtils::IsBarrierSafeToExecute(abarrier))
 	{
@@ -847,8 +847,8 @@ void CompoundModel::UploadModelDataDefaultTexture(DX12Commandlist& copycmdlist)
 		copycmdlist->ResourceBarrier(1, &abarrier);
 	}
 
-}
-void CompoundModel::UploadData(DX12Commandlist& copycmdlist, bool uploaddefaults, bool uploadmodeldatatogpubuffers)
+*/}
+void CompoundModel::UploadData(RenderContext context, bool uploaddefaults, bool uploadmodeldatatogpubuffers)
 {
 	/*if (uploaddefaults)
 	{
@@ -856,11 +856,11 @@ void CompoundModel::UploadData(DX12Commandlist& copycmdlist, bool uploaddefaults
 	}*/
 	if (uploadmodeldatatogpubuffers)
 	{
-		UploadModelDatatoGPUBuffers(copycmdlist);
+		UploadModelDatatoGPUBuffers(context);
 	}
 	
 }
-void CompoundModel::UploadModelTextureData(DX12Commandlist& copycmdlist)
+void CompoundModel::UploadModelTextureData(RenderContext context)
 {
 	assert(m_supportmaterial);
 	/*for (size_t i = 0; i < m_models.size(); i++)
@@ -869,10 +869,10 @@ void CompoundModel::UploadModelTextureData(DX12Commandlist& copycmdlist)
 	}*/
 	for (DXTexture* tex : m_texturestoupload)
 	{
-		tex->UploadTexture(copycmdlist);
+		tex->UploadTexture();
 	}
 }
-void CompoundModel::UploadCurrentFrameModelTextureData(DX12Commandlist& copycmdlist, bool increment)
+void CompoundModel::UploadCurrentFrameModelTextureData(RenderContext context, bool increment)
 {
 	if (!m_supportmaterial)
 	{
@@ -882,13 +882,13 @@ void CompoundModel::UploadCurrentFrameModelTextureData(DX12Commandlist& copycmdl
 	{
 		return;
 	}
-	m_texturestoupload[m_currenttexidxtoupload]->UploadTexture(copycmdlist);
+	m_texturestoupload[m_currenttexidxtoupload]->UploadTexture();
 	if (increment)
 	{
 		m_currenttexidxtoupload++;
 	}
 }
-void CompoundModel::UploadCurrentFrameModelTextureData(ComPtr< ID3D12Device> creationdevice, DX12Commandlist& copycmdlist, bool increment)
+void CompoundModel::UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> creationdevice, RenderContext context, bool increment)
 {
 	if (!m_supportmaterial)
 	{
@@ -904,7 +904,7 @@ void CompoundModel::UploadCurrentFrameModelTextureData(ComPtr< ID3D12Device> cre
 		m_currenttexidxtoupload++;
 	}
 }
-void CompoundModel::UploadAllModelTextureData(DX12Commandlist& copycmdlist)
+void CompoundModel::UploadAllModelTextureData(RenderContext context)
 {
 	if (!NeedToUploadTextures())
 	{
@@ -913,12 +913,12 @@ void CompoundModel::UploadAllModelTextureData(DX12Commandlist& copycmdlist)
 	//upload all textures's data sequentially
 	for (size_t i = 0; i < m_texturestoupload.size(); i++)
 	{
-		m_texturestoupload[i]->UploadTexture(copycmdlist);
+		m_texturestoupload[i]->UploadTexture();
 	}
 	//update currenttexidxtoupload variable such that internal function can indicate no textures need upload. 
 	m_currenttexidxtoupload = m_texturestoupload.size();
 }
-void CompoundModel::UploadAllModelTextureData(ComPtr< ID3D12Device> creationdevice, DX12Commandlist& copycmdlist)
+void CompoundModel::UploadAllModelTextureData(ComPtr< ID3D11Device> creationdevice, RenderContext context)
 {
 	if (!NeedToUploadTextureInfos())
 	{
@@ -927,7 +927,7 @@ void CompoundModel::UploadAllModelTextureData(ComPtr< ID3D12Device> creationdevi
 
 	for (int i = 0; i < m_textureuploadInfos.size(); i++)
 	{
-		UploadModelTextureData(m_textureuploadInfos[i],creationdevice,copycmdlist);
+		UploadModelTextureData(m_textureuploadInfos[i],creationdevice,context);
 		/*if (!m_textureuploadInfos[i].dataloaded)
 		{
 			m_textureuploadInfos[i].ModelMaterialholdingTexture->LoadTextureData(m_textureuploadInfos[i].texture);
@@ -952,7 +952,7 @@ void CompoundModel::UploadAllModelTextureData(ComPtr< ID3D12Device> creationdevi
 	//update currenttexidxtoupload variable such that internal function can indicate no textures need upload. 
 	m_currenttexidxtoupload = m_textureuploadInfos.size();
 }
-void CompoundModel::UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo, ComPtr< ID3D12Device> creationdevice, DX12Commandlist& copycmdlist)
+void CompoundModel::UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo, ComPtr< ID3D11Device> creationdevice, RenderContext context)
 {
 	if (!texUploadinfo.dataloaded)
 	{

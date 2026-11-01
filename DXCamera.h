@@ -7,6 +7,13 @@
 * 2. new where pitch & yaw are used to rotate previous camera vectors along CX & Y axis,target position is updated.
 * do note both varients use different way of interpreting mouse X,Y offset 1 as pitch yaw change directly and other with actual rotations.
 */
+struct CameraMatriciesData
+{
+	XMMATRIX projectionMat;
+	XMMATRIX viewMat;
+	XMMATRIX vpMat;
+
+};
 class DXCamera
 {
 public:

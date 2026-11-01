@@ -42,8 +42,6 @@ struct ShaderTransformConstants_GeneralComplete
 	XMMATRIX projection;
 };
 
-//forwarddeclare
-struct CameraMatriciesData;
 /*
 * Imp terms
 * Load a texture means load from file the tex data/params
@@ -55,7 +53,7 @@ class ModelMaterial
 public:
 	struct TextureUploadInfo
 	{
-		//DXTexture* texture = nullptr;
+		DXTexture* texture = nullptr;
 		ModelMaterial* ModelMaterialholdingTexture = nullptr;
 		bool dataloaded = false;
 		bool textureInitialized = false;
@@ -143,15 +141,15 @@ public:
 	inline D3D12_INDEX_BUFFER_VIEW GetIBView() { return m_indexbufferview; }
 	inline D3D12_VERTEX_BUFFER_VIEW GetVBView() { return m_vertexbufferview; }
 	void UploadModelDatatoBuffers();
-	void UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist);
-	void UploadModelTextureData(DX12Commandlist& copycmdlist);
+	void UploadModelDatatoGPUBuffers(RenderContext context);
+	void UploadModelTextureData(RenderContext context);
 	inline size_t GetIndiciesCount() { return m_indicies.size(); }
 	inline bool HasIndexBuffer() { return (m_indicies.size() > 0); }
 	inline size_t GetVerticiesCount() { return m_verticies.size(); }
 	inline ModelDataUploadMode GetUploadMode() { return m_uploadmode; }
 	inline VertexVersion GetVertexVersionUsed() { return m_vertexversion; }
 	inline void SetVertexVersionUsed(VertexVersion vvused) { m_vertexversion=vvused; }
-	void TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist);
+	//void TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist);
 	ModelMaterial& GetLoadedMaterial() { return m_loadedmaterial; }
 	void SetMatGPUIdx(unsigned idx) { m_tmpmaterialgpuindex = idx; m_matconsts.texsrvidx = m_tmpmaterialgpuindex; }
 	void SetDiffuseIdx(unsigned idx) { m_diffusetexidx = idx; m_matconsts.texsrvidx = m_diffusetexidx;
@@ -181,8 +179,8 @@ private:
 	//verticies laid down in the raw vertex data form(i.e. array of floats;this is needed because verticies can be of any specialized type hence cannot be copied directly to upload buffer.
 	vector<float> m_vertexdataraw;
 	vector<unsigned> m_indicies;
-	D3D12_VERTEX_BUFFER_VIEW m_vertexbufferview;
-	D3D12_INDEX_BUFFER_VIEW m_indexbufferview;
+	//D3D12_VERTEX_BUFFER_VIEW m_vertexbufferview;
+	//D3D12_INDEX_BUFFER_VIEW m_indexbufferview;
 	ModelDataUploadMode m_uploadmode;
 	AssimpMaterial m_material;
 	//actual material block used to retrive material data for model in shaders
@@ -206,15 +204,15 @@ class CompoundModel
 public:
 	//set ib & vb and issue draw command.
 	void Extratransform(XMMATRIX extratransformmat);
-	void Draw(DX12Commandlist& renderingcmdlist, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex=2, bool drawOpaque = true,bool drawNonOpaque = true);
-	void Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
-	void Draw(DX12Commandlist& renderingcmdlist, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
+	void Draw(RenderContext context, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex=2, bool drawOpaque = true,bool drawNonOpaque = true);
+	void Draw(RenderContext context, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
+	void Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
 	void UploadModelDatatoBuffers();
-	void UploadModelDatatoGPUBuffers(DX12Commandlist& copycmdlist);
-	void UploadModelDataDefaultTexture(DX12Commandlist& copycmdlist);
+	void UploadModelDatatoGPUBuffers(RenderContext context);
+	void UploadModelDataDefaultTexture(RenderContext context);
 	//a combined upload function to issue upload commands for model data to gpu and other default data if any.
-	void UploadData(DX12Commandlist& copycmdlist, bool uploaddefaults = true, bool uploadmodeldatatogpubuffers = true);
-	void UploadModelTextureData(DX12Commandlist& copycmdlist);
+	void UploadData(RenderContext context, bool uploaddefaults = true, bool uploadmodeldatatogpubuffers = true);
+	void UploadModelTextureData(RenderContext context);
 	const vector<Model*>& GetModels() { return m_models; }
 	DX12DESCHEAP& GetResourceviewHeap() { return m_resourceviewheap; }
 	CompoundModel(ModelDataUploadMode uploadmode = NOCOPY);
@@ -243,11 +241,11 @@ public:
 	bool m_supportNonOpaqueMaterial = true;
 	bool SupportMaterial() { return m_supportmaterial; }
 	bool SupportNonOpaqueMaterial() { return m_supportNonOpaqueMaterial; }
-	void UploadCurrentFrameModelTextureData(DX12Commandlist& copycmdlist,bool increment =true);
-	void UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> creationdevice, DX12Commandlist& copycmdlist, bool increment = true);
-	void UploadAllModelTextureData(DX12Commandlist& copycmdlist);
-	void UploadAllModelTextureData(ComPtr< ID3D11Device> creationdevice,  DX12Commandlist& copycmdlist);
-	void UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo,ComPtr< ID3D11Device> creationdevice, DX12Commandlist& copycmdlist);
+	void UploadCurrentFrameModelTextureData(RenderContext context,bool increment =true);
+	void UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> creationdevice, RenderContext context, bool increment = true);
+	void UploadAllModelTextureData(RenderContext context);
+	void UploadAllModelTextureData(ComPtr< ID3D11Device> creationdevice, RenderContext context);
+	void UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo,ComPtr< ID3D11Device> creationdevice, RenderContext context);
 	bool NeedToUploadTextures() { return (m_currenttexidxtoupload<m_texturestoupload.size()); }
 	bool NeedToUploadTextureInfos() { return (m_currenttexidxtoupload < m_textureuploadInfos.size()); }
 private:
