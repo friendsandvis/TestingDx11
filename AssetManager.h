@@ -9,19 +9,8 @@
 //#include"DX12Texture.h"
 #include<vector>
 #include"DX11Buffer.h"
+#include"DXCamera.h"
 #define SHADERTRANSFORMCONSTANTSSTRUCT ShaderTransformConstants_GeneralComplete 
-
-struct Vertex
-{
-	float X;
-	float Y;
-	float Z;
-	float U;
-	float V;
-};
-
-
-
 enum ModelDataUploadMode
 {
 	NOCOPY,//using uploadbuffer directly as vb & ib

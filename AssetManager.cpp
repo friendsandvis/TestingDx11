@@ -1,5 +1,4 @@
 #include"AssetManager.h"
-#include"DXCamera.h"
 #include<string>
 #include<set>
 //during model loading this macro is used to determine if we need to set rendering for non opaque models to allow rendering them or not.
