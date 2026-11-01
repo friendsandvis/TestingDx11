@@ -1,6 +1,8 @@
 #include"AssetManager.h"
 #include<string>
 #include<set>
+#include"Dx11RenderContext.h"
+#include"VertexData.h"
 //during model loading this macro is used to determine if we need to set rendering for non opaque models to allow rendering them or not.
 #define ALLOWRENDERINGNONOPAQUEMODELS true
 
@@ -297,7 +299,11 @@ void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvp
 	{
 		return;
 	}
-	renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
+	//renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
+	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(m_vertexversion);
+	UINT v_stride = vertInfo.stride;
+	UINT v_offset = 0;
+	context.m_mainContext->IASetVertexBuffers(0, 1, GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
 	XMMATRIX mvp = camMatData.vpMat;
 	if (usemodelmatrix)
 	{
@@ -333,12 +339,24 @@ void Model::Extratransform(XMMATRIX extratransformmat)
 	m_transform = XMMatrixMultiply(m_transform,extratransformmat);
 }
 
-void Model::InitVertexBuffer(ComPtr< ID3D12Device> creationdevice, vector<VertexBase*>& verticies)
+void Model::InitVertexBuffer(ComPtr< ID3D11Device> creationdevice, vector<VertexBase*>& verticies)
 {
 
 	m_verticies = verticies;
 	BuildVertexRawData();
-	DX12ResourceCreationProperties vbproperties;
+	D3D11_BUFFER_DESC vertexBufferDesc = {};
+	vertexBufferDesc.ByteWidth = sizeof(m_vertexdataraw[0]) * static_cast<UINT>(m_vertexdataraw.size());
+	vertexBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+	//subresource data for vertex buffer
+	D3D11_SUBRESOURCE_DATA vertexBufferInitData = {};
+	vertexBufferInitData.pSysMem = reinterpret_cast<void*>(m_vertexdataraw.data());
+	vertexBufferInitData.SysMemPitch = 0;
+	vertexBufferInitData.SysMemSlicePitch = 0;
+	m_vertexBuffer.Init(creationdevice, vertexBufferDesc, vertexBufferInitData);
+	/*DX12ResourceCreationProperties vbproperties;
 	vbproperties.resheapflags = D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE;
 	vbproperties.resinitialstate = D3D12_RESOURCE_STATE_COMMON;
 	vbproperties.resheapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -359,6 +377,7 @@ void Model::InitVertexBuffer(ComPtr< ID3D12Device> creationdevice, vector<Vertex
 	vbproperties.resdesc.SampleDesc.Quality = 0;
 	vbproperties.resdesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 	
+
 	
 
 	//prepare vbview as well
@@ -377,16 +396,27 @@ void Model::InitVertexBuffer(ComPtr< ID3D12Device> creationdevice, vector<Vertex
 	}
 	m_vertexbufferview.SizeInBytes = m_vertexuploadbuffer.GetSize();
 	m_vertexbufferview.StrideInBytes=DXVertexManager::GetVertexSize(m_vertexversion);
-
+	*/
 	
 
 
 
 }
-void Model::InitIndexBuffer(ComPtr< ID3D12Device> creationdevice,vector<unsigned>& indicies)
+void Model::InitIndexBuffer(ComPtr< ID3D11Device> creationdevice,vector<unsigned>& indicies)
 {
 	m_indicies = indicies;
-	DX12ResourceCreationProperties ibproperties;
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.ByteWidth = sizeof(m_indicies[0]) * m_indicies.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+	D3D11_SUBRESOURCE_DATA indexBufferInitData = {};
+	indexBufferInitData.pSysMem = reinterpret_cast<void*>(m_indicies.data());
+	indexBufferInitData.SysMemPitch = 0;
+	indexBufferInitData.SysMemSlicePitch = 0;
+	m_indexBuffer.Init(creationdevice, indexBufferDesc, indexBufferInitData);
+	/*DX12ResourceCreationProperties ibproperties;
 	ibproperties.resheapflags = D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE;
 	ibproperties.resinitialstate = D3D12_RESOURCE_STATE_COMMON;
 	ibproperties.resheapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -428,9 +458,9 @@ void Model::InitIndexBuffer(ComPtr< ID3D12Device> creationdevice,vector<unsigned
 
 
 
-}
+*/}
 
-void Model::Init(ComPtr< ID3D12Device> creationdevice, AssimpLoadedModel& assimpModel, UINT meshindexinassimpmodeltoload, VertexVersion modelvertexversion, bool supportmaterial)
+void Model::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel& assimpModel, UINT meshindexinassimpmodeltoload, VertexVersion modelvertexversion, bool supportmaterial)
 {
 	SetVertexVersionUsed(modelvertexversion);
 	vector<VertexBase*> verticies;
@@ -521,7 +551,7 @@ void Model::BuildVertexRawData()
 
 
 void Model::UploadModelDatatoBuffers()
-{
+{/*
 	//upload vertexdata
 	{
 		BufferMapParams vbmapparams = {};
@@ -554,11 +584,11 @@ void Model::UploadModelDatatoBuffers()
 		m_indexuploadbuffer.UnMap(ibmapparams);
 
 	}
-}
+*/}
 
 void Model::UploadModelDatatoGPUBuffers(RenderContext context)
 
-{
+{/*
 	if (m_uploadmode != COPY)
 	{
 		return;
@@ -581,7 +611,7 @@ void Model::UploadModelDatatoGPUBuffers(RenderContext context)
 		copycmdlist->ResourceBarrier(1, &barrier);
 	}
 
-}
+*/}
 void Model::UploadModelTextureData(RenderContext context)
 {
 	m_loadedmaterial.UploadTextures(copycmdlist);
@@ -601,7 +631,7 @@ void Model::UploadModelTextureData(RenderContext context)
 		cmdlist->ResourceBarrier(1, &barrier);
 	}
 }*/
-void Model::InitMaterial(ComPtr< ID3D12Device> creationdevice, wstring texfilepath)
+void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepath)
 {
 	m_loadedmaterial.SetTexPath(texfilepath);
 	//diffuse texture load
@@ -973,7 +1003,7 @@ void CompoundModel::UploadModelTextureData(ModelMaterial::TextureUploadInfo& tex
 	}
 	texUploadinfo.texture->UploadTexture(copycmdlist);
 }
-void CompoundModel::Init(ComPtr< ID3D12Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion, bool supportmaterial)
+void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion, bool supportmaterial)
 {
 	m_supportmaterial = supportmaterial;
 	//init models and gather information required to build up the texture table(diffuse textures only for now)

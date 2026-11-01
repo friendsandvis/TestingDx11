@@ -127,8 +127,8 @@ public:
 	void Init(ComPtr< ID3D11Device> creationdevice,AssimpLoadedModel& assimpModel,UINT meshindexinassimpmodeltoload,VertexVersion modelvertexversion,bool supportmaterial =false);
 	void InitVertexBuffer(ComPtr< ID3D11Device> creationdevice,vector<VertexBase*>& verticies);
 	void InitIndexBuffer(ComPtr< ID3D11Device> creationdevice,vector<unsigned>& indicies);
-	inline D3D12_INDEX_BUFFER_VIEW GetIBView() { return m_indexbufferview; }
-	inline D3D12_VERTEX_BUFFER_VIEW GetVBView() { return m_vertexbufferview; }
+	inline DX11Buffer& GetIndexBuffer() { return m_indexBuffer; }
+	inline DX11Buffer& GetVertexBuffer() { return m_vertexBuffer; }
 	void UploadModelDatatoBuffers();
 	void UploadModelDatatoGPUBuffers(RenderContext context);
 	void UploadModelTextureData(RenderContext context);
@@ -161,7 +161,7 @@ public:
 private:
 	SHADERTRANSFORMCONSTANTSSTRUCT m_shadertransformconsts;
 	XMMATRIX m_transform;
-	DX11Buffer m_vertexbuffer, m_indexbuffer,m_vertexuploadbuffer,m_indexuploadbuffer;
+	DX11Buffer m_indexBuffer,m_vertexBuffer;
 	//verticies are all of a single specialized vertex type and they are all dynamically allocated.
 	VertexVersion m_vertexversion;
 	vector<VertexBase*> m_verticies;
