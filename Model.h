@@ -1,8 +1,9 @@
 #pragma once
 #include<vector>
-#include"VertexData.h"
+//#include"VertexData.h"
+#include"DXVertexManager.h"
 #include"Dx11Buffer.h"
-class RenderContext;
+#include"Dx11RenderContext.h"
 class Model
 {
 public:

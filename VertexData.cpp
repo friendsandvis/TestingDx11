@@ -1,7 +1,7 @@
-#include"VertexData.h"
+/*#include"VertexData.h"
 #include<cassert>
 
-void VertexBase::BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer)
+void DXVertexManager::BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer)
 {
 	assert(vertexData.size() > 0);
 	//make sure type is consistent for each vertex in data passed
@@ -76,3 +76,4 @@ void VertexBase::BuildInputElementDesc(VertexVersion vertVersion, std::vector<D3
 	break;
 	}
 }
+*/

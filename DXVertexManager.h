@@ -9,7 +9,10 @@ using namespace std;
 Define Various Vertex classes to be used in applications.
 
 */
-
+struct VertexVersionInfo
+{
+	unsigned int stride;
+};
 //most used simple position & uv vertex.
 struct Vertex
 {
@@ -37,19 +40,27 @@ public:
 	}
 	VertexVersion m_vertversion = VertexVersion::UNKNOWN;
 	virtual unsigned GetSize() { return 0; }
+	void setVertexType(VertexVersion type)
+	{
+		m_vertversion = type;
+	}
+	VertexVersion GetVertexType()
+	{
+		return m_vertversion;
+	}
 };
 
-class VetexV0 :public VertexBase
+class VertexV0 :public VertexBase
 {
 public:
 	XMFLOAT3 m_position;
 	XMFLOAT2 m_uv;
 	unsigned GetSize() { return (sizeof(float) * 5); }
-	VetexV0()
+	VertexV0()
 	{
 		m_vertversion = VertexVersion::VERTEXVERSION0;
 	}
-	VetexV0(XMFLOAT3 pos, XMFLOAT2 uv)
+	VertexV0(XMFLOAT3 pos, XMFLOAT2 uv)
 	{
 		Set(pos, uv);
 		m_vertversion = VertexVersion::VERTEXVERSION0;
@@ -70,12 +81,12 @@ public:
 	void Set(XMFLOAT3 pos, XMFLOAT3 col) { m_position = pos; m_vertexcolour = col; }
 };
 
-class VetexV2 :public VertexBase
+class VertexV2 :public VertexBase
 {
 public:
 	XMFLOAT3 m_position;
 	XMFLOAT3 m_normal;
-	VetexV2()
+	VertexV2()
 	{
 		m_vertversion = VertexVersion::VERTEXVERSION2;
 	}
@@ -101,6 +112,9 @@ public:
 	static void BuildDefaultInputelementdesc( VertexVersion vtype);
 	static unsigned GetVertexSize(VertexVersion vtype);
 	static void RetriveRawVertexData(vector<float>& outverticiesrawdata, VertexBase* avertex);
+	static void BuildRawVertexBuffer(std::vector<VertexBase*> vertexData, std::vector<float>& outBuffer);
+	static void BuildInputElementDesc(VertexVersion vertVersion, std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs);
+	static VertexVersionInfo GetVertexVersionInfo(VertexVersion vertVersion);
 };
 //VertexData structs that can be used to pass vertex data for a model to raytracing(1 for each vertex type)
 struct RTVertexDataV0

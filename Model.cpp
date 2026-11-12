@@ -10,7 +10,7 @@ void Model::SetVertexData(std::vector<VertexBase*>& verticies, bool buildRawVert
 	}
 	if (buildRawVertexData)
 	{
-		VertexBase::BuildRawVertexBuffer(m_verticies, m_verticiesDataRaw);
+		DXVertexManager::BuildRawVertexBuffer(m_verticies, m_verticiesDataRaw);
 	}
 }
 
@@ -57,7 +57,7 @@ void Model::CreateIndexBuffer(ComPtr<ID3D11Device> device)
 }
 void Model::BuildInputElementDesc(std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs)
 {
-	VertexBase::BuildInputElementDesc(m_vertexVersion, outInputElementDescs);
+	DXVertexManager::BuildInputElementDesc(m_vertexVersion, outInputElementDescs);
 }
 
 unsigned int Model::GetIndiciesCount()
@@ -76,7 +76,7 @@ void Model::Draw(RenderContext* context)
 		return;
 	}
 	//setup vertex index buffer and layout
-	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(m_vertexVersion);
+	VertexVersionInfo vertInfo = DXVertexManager::GetVertexVersionInfo(m_vertexVersion);
 	UINT v_stride = vertInfo.stride;
 	UINT v_offset = 0;
 	context->m_mainContext->IASetVertexBuffers(0, 1, GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);

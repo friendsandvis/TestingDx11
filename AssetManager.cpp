@@ -2,7 +2,7 @@
 #include<string>
 #include<set>
 #include"Dx11RenderContext.h"
-#include"VertexData.h"
+//#include"VertexData.h"
 //during model loading this macro is used to determine if we need to set rendering for non opaque models to allow rendering them or not.
 #define ALLOWRENDERINGNONOPAQUEMODELS true
 
@@ -139,12 +139,12 @@ std::vector<unsigned> triangleindicies =
 {
 	0,1,2
 };
-std::vector<VetexV0> planeVertexData_versionV0 =
+std::vector<VertexV0> planeVertexData_versionV0 =
 {
-	VetexV0({-1.0f, 1.0f, 0.0f}, {0.0f,0.0f}),//0
-	VetexV0({-1.0f,-1.0f,0.0f}, {0.0f,1.0f}),//1
-	VetexV0({1.0f,-1.0f,0.0f},  {1.0f,1.0f}),//2
-	VetexV0({1.0f,1.0f,0.0f},   {1.0f,0.0f}),//3
+	VertexV0({-1.0f, 1.0f, 0.0f}, {0.0f,0.0f}),//0
+	VertexV0({-1.0f,-1.0f,0.0f}, {0.0f,1.0f}),//1
+	VertexV0({1.0f,-1.0f,0.0f},  {1.0f,1.0f}),//2
+	VertexV0({1.0f,1.0f,0.0f},   {1.0f,0.0f}),//3
 
 };
 //repesentation of a single mesh vertex
@@ -209,7 +209,7 @@ void Model::Draw(RenderContext context,XMMATRIX vpmatrix, UINT mvpmatrixrootpara
 		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
 	}
 }
-void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
+/*void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
 {
 	if (!m_Allowrender)
 	{
@@ -250,7 +250,7 @@ void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvp
 		//draw call for non indexed
 		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
 	}
-}
+}*/
 
 void Model::Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix, bool setmvpmatrix, bool supportmaterial, unsigned int instanceCount)
 {
@@ -300,7 +300,7 @@ void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvp
 		return;
 	}
 	//renderingcmdlist->IASetVertexBuffers(0, 1, &m_vertexbufferview);
-	VertexVersionInfo vertInfo = VertexBase::GetVertexVersionInfo(m_vertexversion);
+	VertexVersionInfo vertInfo = DXVertexManager::GetVertexVersionInfo(m_vertexversion);
 	UINT v_stride = vertInfo.stride;
 	UINT v_offset = 0;
 	context.m_mainContext->IASetVertexBuffers(0, 1, GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
@@ -503,7 +503,7 @@ void Model::GetVertexArray(vector<VertexBase*>& outverticies, AssimpLoadedMesh& 
 		switch (vertversion)
 		{
 		case VERTEXVERSION0:
-		{VetexV0* vert = new VetexV0();
+		{VertexV0* vert = new VertexV0();
 		vert->m_position.x = aprocessedvertex.pos.x;
 		vert->m_position.y = aprocessedvertex.pos.y;
 		vert->m_position.z = aprocessedvertex.pos.z;
@@ -514,7 +514,7 @@ void Model::GetVertexArray(vector<VertexBase*>& outverticies, AssimpLoadedMesh& 
 		}
 		
 		case VERTEXVERSION2:
-		{VetexV2* vert = new VetexV2();
+		{VertexV2* vert = new VertexV2();
 		vert->m_position.x = aprocessedvertex.pos.x;
 		vert->m_position.y = aprocessedvertex.pos.y;
 		vert->m_position.z = aprocessedvertex.pos.z;
@@ -1274,30 +1274,30 @@ void BasicModelManager::GetPlaneVerticiesV0(vector<VertexBase*>& outverticies)
 {
 	/*
 	//0(left-top)
-	VetexV0* vert = new VetexV0();
+	VertexV0* vert = new VertexV0();
 	vert->m_position = { -1.0f, 1.0f, 0.0f };
 	vert->m_uv = { 0.0f,0.0f };
 	outverticies.push_back(vert);
 	//1(left-bottom)
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { -1.0f,-1.0f,0.0f };
 	vert->m_uv = { 0.0f,1.0f };
 	outverticies.push_back(vert);
 	//2(right-bottom)
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { 1.0f,-1.0f,0.0f };
 	vert->m_uv = { 1.0f,1.0f };
 	outverticies.push_back(vert);
 	//3(right-top)
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { 1.0f,1.0f,0.0f };
 	vert->m_uv = { 1.0f,0.0f };
 	outverticies.push_back(vert);
 	*/
 	//use verticies from plane verticies vector
-	for (const VetexV0& v : planeVertexData_versionV0)
+	for (const VertexV0& v : planeVertexData_versionV0)
 	{
-		VetexV0* vert = new VetexV0();
+		VertexV0* vert = new VertexV0();
 		(*vert) = v;
 		outverticies.push_back(vert);
 	}
@@ -1309,42 +1309,42 @@ void BasicModelManager::GetCubeVerticiesV0(vector<VertexBase*>& outverticies)
 	
 
 	//0
-	VetexV0* vert = new VetexV0();
+	VertexV0* vert = new VertexV0();
 	vert->m_position = { -1.0f, -1.0f, -1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//1
-	 vert = new VetexV0();
+	 vert = new VertexV0();
 	vert->m_position = { -1.0f,  1.0f, -1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//2
-	 vert = new VetexV0();
+	 vert = new VertexV0();
 	vert->m_position = { 1.0f,  1.0f, -1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//3
-	 vert = new VetexV0();
+	 vert = new VertexV0();
 	vert->m_position = { 1.0f, -1.0f, -1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//4
-	 vert = new VetexV0();
+	 vert = new VertexV0();
 	vert->m_position = { -1.0f,-1.0f, 1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//5
-	 vert = new VetexV0();
+	 vert = new VertexV0();
 	vert->m_position = { -1.0f, 1.0f, 1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//6
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { 1.0f, 1.0f, 1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 	//7
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { 1.0f,-1.0f, 1.0f };
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
@@ -1368,17 +1368,17 @@ void BasicModelManager::GetCubeVerticiesV3(vector<VertexBase*>& outverticies)
 void BasicModelManager::GetTriangleVerticiesV0(vector<VertexBase*>& outverticies)
 {
 	//0(center-top)
-	VetexV0* vert = new VetexV0();
+	VertexV0* vert = new VertexV0();
 	vert->m_position = { 0.0f, 1.0f, 0.0f };
 	vert->m_uv = { 0.5f,1.0f };
 	outverticies.push_back(vert);
 	//1(left-bottom)
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { -1.0f,-1.0f,0.0f };
 	vert->m_uv = { 0.0f,0.0f };
 	outverticies.push_back(vert);
 	//2(right-bottom)
-	vert = new VetexV0();
+	vert = new VertexV0();
 	vert->m_position = { 1.0f,-1.0f,0.0f };
 	vert->m_uv = { 1.0f,0.0f };
 	outverticies.push_back(vert);
@@ -1390,7 +1390,7 @@ void BasicModelManager::GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertex
 	GetTriangleVerticiesV0(verticies);
 	for (VertexBase* vertex : verticies)
 	{
-		VetexV0* vertexv0 = dynamic_cast<VetexV0*>(vertex);
+		VertexV0* vertexv0 = dynamic_cast<VertexV0*>(vertex);
 		RTVertexDataV0 rtvert = {};
 		rtvert.m_position = vertexv0->m_position;
 		rtvert.m_uv = vertexv0->m_uv;

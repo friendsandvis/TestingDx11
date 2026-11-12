@@ -2,7 +2,7 @@
 #include"DX11Common.h"
 #include<vector>
 
-enum class VertexVersion
+/*enum class VertexVersion
 {
 	//VertexV0
 	UNKNOWN,
@@ -10,8 +10,8 @@ enum class VertexVersion
 	VERTEXVERSION1,
 	VERTEXVERSION2,
 	VERTEXVERSION3
-};
-struct VertexVersionInfo
+};*/
+/*struct VertexVersionInfo
 {
 	unsigned int stride;
 };
@@ -45,4 +45,4 @@ public:
 		m_position.z = z;
 	}
 };
-
+*/

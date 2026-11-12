@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
-#include"VertexData.h"
+//#include"VertexData.h"
+#include"DXVertexManager.h"
 
 class BasicModelManager
 {

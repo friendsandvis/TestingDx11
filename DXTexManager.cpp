@@ -59,3 +59,8 @@ bool DXTexture::Init(ComPtr<ID3D11Device> creationdevice)
 {
 	return true;
 }
+
+void DXTexture::UploadTexture()
+{
+
+}

@@ -12,7 +12,7 @@ void SimpleTriangleApplication::InitExtras(ComPtr<ID3D11Device> device)
 	
 	m_triangleModel.Init(VertexVersion::VERTEXVERSION0);
 	m_triangleModel.SetVertexData(verticies, true);
-	std::vector<float>& verticiesDataRaw = m_triangleModel.GetVerticiesRawData();//VertexBase::BuildRawVertexBuffer(verticies, verticiesDataRaw);
+	std::vector<float>& verticiesDataRaw = m_triangleModel.GetVerticiesRawData();//DXVertexManager::BuildRawVertexBuffer(verticies, verticiesDataRaw);
 	m_triangleModel.CreateVertexBuffer(device);
 
 	//raster state
