@@ -204,7 +204,7 @@ public:
 	void UploadData(RenderContext context, bool uploaddefaults = true, bool uploadmodeldatatogpubuffers = true);
 	void UploadModelTextureData(RenderContext context);
 	const vector<Model*>& GetModels() { return m_models; }
-	DX12DESCHEAP& GetResourceviewHeap() { return m_resourceviewheap; }
+	void GetResourceviewHeap() {}
 	CompoundModel(ModelDataUploadMode uploadmode = NOCOPY);
 	~CompoundModel();
 	void Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion,bool supportmaterial=false);
@@ -215,8 +215,8 @@ public:
 	VertexVersion m_vertexversion;
 	vector<Model*> m_models;
 	//model material related data
-	DX12DESCHEAP m_resourceviewheap;
-	DX12TextureSimple m_whitetexture;
+	//DX12DESCHEAP m_resourceviewheap;
+	//DX12TextureSimple m_whitetexture;
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT m_whitetexsubresfootprint;
 	DX11Buffer m_whitetexuploadbuffer;
 	vector< DXTexture*> m_texturestoupload;

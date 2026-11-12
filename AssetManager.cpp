@@ -1053,11 +1053,11 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 	//prevent crash if no srv required(we do not need the heap then).
 	if (actualSRVtoallocate)
 	{
-		D3D12_DESCRIPTOR_HEAP_DESC texsrvheapdesc = {};
+		/*D3D12_DESCRIPTOR_HEAP_DESC texsrvheapdesc = {};
 		texsrvheapdesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		texsrvheapdesc.NumDescriptors = actualSRVtoallocate;
 		texsrvheapdesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		m_resourceviewheap.Init(texsrvheapdesc, creationdevice);
+		m_resourceviewheap.Init(texsrvheapdesc, creationdevice);*/
 		//create actual srvs
 		int indexinsrvheaptouse = 1;//0th place used for material table buffer
 		for (size_t i = 0; i < m_models.size(); i++)
@@ -1066,12 +1066,13 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 				DXTexture* diffusetex = m_models[i]->GetLoadedMaterial().GetDiffuseTexture();
 				if (diffusetex)
 				{
-					D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
+					//implement logic for texture loading
+					/*D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
 					//deferring loading texture data at creation time hence full srv creation data cannot be determined(mip level format not set)
 					srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 					srvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 					//we update srv creation for this texture to upload info as we are differing the loading and actual resource creation of texture. 
-					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, diffusetex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));
+					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, diffusetex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));*/
 
 					m_models[i]->SetDiffusetextureIdx(indexinsrvheaptouse);
 					indexinsrvheaptouse++;
@@ -1081,12 +1082,13 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 				DXTexture* normaltex = m_models[i]->GetLoadedMaterial().GetNormalTexture();
 				if (normaltex)
 				{
-					D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
+					////implement logic for texture loading
+					/*D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
 					//deferring loading texture data at creation time hence full srv creation data cannot be determined(mip level format not set)
 					srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 					srvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 					//we update srv creation for this texture to upload info as we are differing the loading and actual resource creation of texture. 
-					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, normaltex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));
+					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, normaltex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));*/
 					m_models[i]->SetNormaltextureIdx(indexinsrvheaptouse);
 					indexinsrvheaptouse++;
 
@@ -1095,12 +1097,13 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 				DXTexture* roughnesstex = m_models[i]->GetLoadedMaterial().GetRoughnessTexture();
 				if (roughnesstex)
 				{
-					D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
+					//implement logic for texture loading
+					/*D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc = {};
 					//deferring loading texture data at creation time hence full srv creation data cannot be determined(mip level format not set)
 					srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 					srvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 					//we update srv creation for this texture to upload info as we are differing the loading and actual resource creation of texture. 
-					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, roughnesstex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));
+					UpdateTexUploadInfoSRVcreationData(m_textureuploadInfos, roughnesstex, srvdesc, m_resourceviewheap.GetCPUHandleOffseted(indexinsrvheaptouse));*/
 					m_models[i]->SetRoughnesstextureIdx(indexinsrvheaptouse);
 					indexinsrvheaptouse++;
 
