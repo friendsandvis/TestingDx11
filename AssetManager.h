@@ -3,13 +3,14 @@
 #include"AssimpManager.h"
 #include"DX11Common.h"
 #include"Dx11RenderContext.h"
-//#include"DX11Buffer.h"
+#include"DX11Buffer.h"
 #include"DXVertexManager.h"
 #include"DXTexManager.h"
 //#include"DX12Texture.h"
 #include<vector>
 #include"DX11Buffer.h"
 #include"DXCamera.h"
+#include"DXUtils.h"
 #define SHADERTRANSFORMCONSTANTSSTRUCT ShaderTransformConstants_GeneralComplete 
 enum ModelDataUploadMode
 {

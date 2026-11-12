@@ -316,21 +316,24 @@ void Model::Draw(RenderContext context, CameraMatriciesData camMatData, UINT mvp
 
 	if (setmvpmatrix)
 	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts) / 4, &m_shadertransformconsts, 0);
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(mvpmatrixrootparamindex, sizeof(m_shadertransformconsts) / 4, &m_shadertransformconsts, 0);
 
 	}
 	if (supportmaterial)
 	{
-		renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
+		//renderingcmdlist->SetGraphicsRoot32BitConstants(materialconstsrootparamindex, sizeof(m_matconsts) / 4, &m_matconsts, 0);
 	}
 	if (HasIndexBuffer())
 	{
-		renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
-		renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
+		//renderingcmdlist->IASetIndexBuffer(&m_indexbufferview);
+		context.m_mainContext->IASetIndexBuffer(GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+		//renderingcmdlist->DrawIndexedInstanced(GetIndiciesCount(), instanceCount, 0, 0, 0);
+		context.m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);
 	}
 	else
 	{
-		renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
+		//renderingcmdlist->DrawInstanced(m_verticies.size(), instanceCount, 0, 0);
+		context.m_mainContext->Draw(GetVerticiesCount(), 0);
 	}
 }
 void Model::Extratransform(XMMATRIX extratransformmat)
@@ -614,9 +617,9 @@ void Model::UploadModelDatatoGPUBuffers(RenderContext context)
 */}
 void Model::UploadModelTextureData(RenderContext context)
 {
-	m_loadedmaterial.UploadTextures(copycmdlist);
+	/*m_loadedmaterial.UploadTextures(copycmdlist);
 }
-/*void Model::TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist)
+void Model::TransitionVextexAndIndexBufferState(D3D12_RESOURCE_STATES state, ComPtr<ID3D12GraphicsCommandList4>cmdlist)
 {
 	//transition vertexbuffer to state
 	D3D12_RESOURCE_BARRIER barrier=m_vertexbuffer.TransitionResState(state);
@@ -629,8 +632,8 @@ void Model::UploadModelTextureData(RenderContext context)
 	if (DXUtils::IsBarrierSafeToExecute(barrier))
 	{
 		cmdlist->ResourceBarrier(1, &barrier);
-	}
-}*/
+	}*/
+}
 void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepath)
 {
 	m_loadedmaterial.SetTexPath(texfilepath);
@@ -918,7 +921,7 @@ void CompoundModel::UploadCurrentFrameModelTextureData(RenderContext context, bo
 	}
 }
 void CompoundModel::UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> creationdevice, RenderContext context, bool increment)
-{
+{/*
 	if (!m_supportmaterial)
 	{
 		return;
@@ -932,7 +935,7 @@ void CompoundModel::UploadCurrentFrameModelTextureData(ComPtr< ID3D11Device> cre
 	{
 		m_currenttexidxtoupload++;
 	}
-}
+*/}
 void CompoundModel::UploadAllModelTextureData(RenderContext context)
 {
 	if (!NeedToUploadTextures())
@@ -982,7 +985,7 @@ void CompoundModel::UploadAllModelTextureData(ComPtr< ID3D11Device> creationdevi
 	m_currenttexidxtoupload = m_textureuploadInfos.size();
 }
 void CompoundModel::UploadModelTextureData(ModelMaterial::TextureUploadInfo& texUploadinfo, ComPtr< ID3D11Device> creationdevice, RenderContext context)
-{
+{/*
 	if (!texUploadinfo.dataloaded)
 	{
 		texUploadinfo.ModelMaterialholdingTexture->LoadTextureData(texUploadinfo.texture);
@@ -1002,7 +1005,7 @@ void CompoundModel::UploadModelTextureData(ModelMaterial::TextureUploadInfo& tex
 		}
 	}
 	texUploadinfo.texture->UploadTexture(copycmdlist);
-}
+*/}
 void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel& assimpModel, VertexVersion modelvertexversion, bool supportmaterial)
 {
 	m_supportmaterial = supportmaterial;
@@ -1122,7 +1125,7 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 
 	}
 	if (m_supportmaterial)
-	{
+	{/*
 		//create materialtable buffer
 		{
 			DX12ResourceCreationProperties materialtablebufferprops;
@@ -1151,7 +1154,7 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 			m_materialtable.UnMap(mattablewriteparams);
 		}
 		//create whitetexture(default texture)
-		 {
+		  {
 			DX12ResourceCreationProperties	whitetexresprops;
 			DX12TextureSimple::InitResourceCreationProperties(whitetexresprops);
 			whitetexresprops.resdesc.Width = whitetexresprops.resdesc.Height = whitetexresprops.resdesc.DepthOrArraySize = 1;
@@ -1193,11 +1196,11 @@ void CompoundModel::Init(ComPtr< ID3D11Device> creationdevice, AssimpLoadedModel
 			whitetexsrvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 			//m_whitetexture.CreateSRV(creationdevice, whitetexsrvdesc, m_resourceviewheap.GetCPUHandleOffseted(1));
 		}
-	}
+	*/}
 
 }
 void CompoundModel::UpdateTexUploadInfoSRVcreationData(vector< ModelMaterial::TextureUploadInfo>& texUploadInfos, DXTexture* targetTexture, D3D12_SHADER_RESOURCE_VIEW_DESC& srvdesc, D3D12_CPU_DESCRIPTOR_HANDLE srvDescHandle)
-{
+{/*
 	for (ModelMaterial::TextureUploadInfo& texUploadInfo : texUploadInfos)
 	{
 		if (texUploadInfo.texture == targetTexture)
@@ -1207,14 +1210,14 @@ void CompoundModel::UpdateTexUploadInfoSRVcreationData(vector< ModelMaterial::Te
 			texUploadInfo.srvCreationDescHandle = srvDescHandle;
 		}
 	}
-}
+*/}
 
 
 
 
 
 
-void BasicModelManager::InitPlaneModel(ComPtr< ID3D12Device> creationdevice, Model& planemodel)
+void BasicModelManager::InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Model& planemodel)
 {
 	vector<VertexBase*> verticies;
 	GetPlaneVerticiesV0(verticies);
@@ -1223,7 +1226,7 @@ void BasicModelManager::InitPlaneModel(ComPtr< ID3D12Device> creationdevice, Mod
 	planemodel.InitIndexBuffer(creationdevice, planeindicies);
 	planemodel.UploadModelDatatoBuffers();
 }
-void BasicModelManager::InitCubeModel(ComPtr< ID3D12Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion)
+void BasicModelManager::InitCubeModel(ComPtr< ID3D11Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion)
 {
 	vector<VertexBase*> verticies;
 	if (vertexVersion == VertexVersion::VERTEXVERSION0)
@@ -1241,7 +1244,7 @@ void BasicModelManager::InitCubeModel(ComPtr< ID3D12Device> creationdevice, Mode
 	}
 	cubemodel.UploadModelDatatoBuffers();
 }
-void BasicModelManager::InitTriangleModel(ComPtr< ID3D12Device> creationdevice, Model& trianglemodel)
+void BasicModelManager::InitTriangleModel(ComPtr< ID3D11Device> creationdevice, Model& trianglemodel)
 {
 	
 	vector<VertexBase*> verticies;
@@ -1252,12 +1255,12 @@ void BasicModelManager::InitTriangleModel(ComPtr< ID3D12Device> creationdevice, 
 	trianglemodel.UploadModelDatatoBuffers();
 }
 
-void BasicModelManager::LoadModel(ComPtr< ID3D12Device> creationdevice,std::string modelfilepath, Model& outmodel,VertexVersion requiredvertexversion)
+void BasicModelManager::LoadModel(ComPtr< ID3D11Device> creationdevice,std::string modelfilepath, Model& outmodel,VertexVersion requiredvertexversion)
 {
 	AssimpManager assimpmodel(modelfilepath);
 	outmodel.Init(creationdevice,assimpmodel.GetProcessedModel(),0, requiredvertexversion);
 }
-void BasicModelManager::LoadModel(ComPtr< ID3D12Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath, bool supportmaterial)
+void BasicModelManager::LoadModel(ComPtr< ID3D11Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath, bool supportmaterial)
 {
 	AssimpManager assimpmodel(modelfilepath, texfilepath);
 	outmodel.SetTexPath(texfilepath);
@@ -1435,7 +1438,7 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Camera
 */}
 
 void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX11Buffer& camConstBuffer)
-{
+{/*
 	//update data in buffer
 	BufferMapParams camConstwriteparams = {};
 	camConstwriteparams.range.Begin = 0;
@@ -1444,16 +1447,16 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Shader
 	memcpy(camConstBuffMapped, &transformConstantData, camConstBuffer.GetSize());
 	camConstBuffer.UnMap(camConstwriteparams);
 
-}
+*/}
 void BasicModelManager::InitCamConstBuffer(ComPtr< ID3D11Device> creationDevice, DX11Buffer& camConstBuffer)
-{
+{/*
 	DX12ResourceCreationProperties camConstDataBufferProps;
 	DX12Buffer::InitResourceCreationProperties(camConstDataBufferProps);
 	camConstDataBufferProps.resdesc.Width = sizeof(ShaderTransformConstants_GeneralComplete) * 1;
 	camConstDataBufferProps.resheapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
 	camConstBuffer.Init(creationDevice, camConstDataBufferProps, ResourceCreationMode::COMMITED);
 	camConstBuffer.SetName(L"camConstdatabuffer_Light_Place");
-}
+*/}
 ModelMaterial::ModelMaterial()
 	:
 	m_diffusetexture(nullptr),
@@ -1523,8 +1526,8 @@ std::wstring ModelMaterial::GetTextureFilePath(std::wstring texname)
 	wstring texfilepath = m_texfilepath + texname;
 	return texfilepath;
 }
-void ModelMaterial::UploadTextures(DX12Commandlist& copycmdlist)
-{
+void ModelMaterial::UploadTextures()
+{/*
 	if (m_diffusetexture)
 	{
 		m_diffusetexture->UploadTexture(copycmdlist);
@@ -1541,7 +1544,7 @@ void ModelMaterial::UploadTextures(DX12Commandlist& copycmdlist)
 	{
 		m_metalnesstexture->UploadTexture(copycmdlist);
 	}
-}
+*/}
 void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloading)
 {
 	if (m_diffusetexture)

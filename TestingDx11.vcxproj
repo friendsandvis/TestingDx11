@@ -139,9 +139,11 @@
     <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11Texture.cpp" />
     <ClCompile Include="DXCamera.cpp" />
+    <ClCompile Include="DXMathUtil.cpp" />
     <ClCompile Include="DXShaderCompiler.cpp" />
     <ClCompile Include="Dx11Swapchain.cpp" />
     <ClCompile Include="DXTexManager.cpp" />
+    <ClCompile Include="DXUtils.cpp" />
     <ClCompile Include="DXVertexManager.cpp" />
     <ClCompile Include="FXShaderCompiler.cpp" />
     <ClCompile Include="main.cpp" />
@@ -169,10 +171,12 @@
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DXCamera.h" />
+    <ClInclude Include="DXMathUtil.h" />
     <ClInclude Include="DXShaderCompiler.h" />
     <ClInclude Include="Dx11Swapchain.h" />
     <ClInclude Include="DXTexManager.h" />
     <ClInclude Include="DXtexUtils.h" />
+    <ClInclude Include="DXUtils.h" />
     <ClInclude Include="DXVertexManager.h" />
     <ClInclude Include="FXShaderCompiler.h" />
     <ClInclude Include="Model.h" />
@@ -185,7 +189,17 @@
     <ClInclude Include="windmaker.h" />
     <ClInclude Include="WindowProcHook.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets" Condition="Exists('packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets'))" />
+  </Target>
 </Project>
