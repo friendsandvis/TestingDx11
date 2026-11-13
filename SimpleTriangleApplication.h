@@ -24,7 +24,7 @@ private:
 		DirectX::XMMATRIX projMat;
 		DirectX::XMMATRIX modelMat;
 	};
-	Model m_triangleModel;
+	SimpleDXModel m_triangleModel;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
 	ComPtr<ID3D11RasterizerState> m_rasterState;

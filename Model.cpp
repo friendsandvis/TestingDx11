@@ -1,6 +1,6 @@
 #include"Model.h"
 #include"Dx11RenderContext.h"
-void Model::SetVertexData(std::vector<VertexBase*>& verticies, bool buildRawVertexData)
+void SimpleDXModel::SetVertexData(std::vector<VertexBase*>& verticies, bool buildRawVertexData)
 {
 	m_verticies = verticies;
 	//make sure each vertex is of expected type
@@ -14,17 +14,17 @@ void Model::SetVertexData(std::vector<VertexBase*>& verticies, bool buildRawVert
 	}
 }
 
-void Model::SetIndexData(std::vector<unsigned int>& indicies)
+void SimpleDXModel::SetIndexData(std::vector<unsigned int>& indicies)
 {
 	assert(m_HasIndicies);
 	m_indicies = indicies;
 }
-void Model::Init(VertexVersion expectedvertVersion, bool hasIndicies)
+void SimpleDXModel::Init(VertexVersion expectedvertVersion, bool hasIndicies)
 {
 	m_HasIndicies = hasIndicies;
 	m_vertexVersion = expectedvertVersion;
 }
-void Model::CreateVertexBuffer(ComPtr<ID3D11Device> device)
+void SimpleDXModel::CreateVertexBuffer(ComPtr<ID3D11Device> device)
 {
 	assert(m_verticiesDataRaw.size() > 0);
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
@@ -40,7 +40,7 @@ void Model::CreateVertexBuffer(ComPtr<ID3D11Device> device)
 	m_vertexBuffer.Init(device, vertexBufferDesc, vertexBufferInitData);
 }
 
-void Model::CreateIndexBuffer(ComPtr<ID3D11Device> device)
+void SimpleDXModel::CreateIndexBuffer(ComPtr<ID3D11Device> device)
 {
 	assert(m_indicies.size() > 0);
 	D3D11_BUFFER_DESC indexBufferDesc = {};
@@ -55,12 +55,12 @@ void Model::CreateIndexBuffer(ComPtr<ID3D11Device> device)
 	indexBufferInitData.SysMemSlicePitch = 0;
 	m_indexBuffer.Init(device, indexBufferDesc, indexBufferInitData);
 }
-void Model::BuildInputElementDesc(std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs)
+void SimpleDXModel::BuildInputElementDesc(std::vector<D3D11_INPUT_ELEMENT_DESC>& outInputElementDescs)
 {
 	DXVertexManager::BuildInputElementDesc(m_vertexVersion, outInputElementDescs);
 }
 
-unsigned int Model::GetIndiciesCount()
+unsigned int SimpleDXModel::GetIndiciesCount()
 {
 	if (m_HasIndicies)
 	{
@@ -69,7 +69,7 @@ unsigned int Model::GetIndiciesCount()
 	return 0;
 }
 
-void Model::Draw(RenderContext* context)
+void SimpleDXModel::Draw(RenderContext* context)
 {
 	if (context == nullptr)
 	{

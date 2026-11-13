@@ -28,8 +28,8 @@ private:
 		DirectX::XMMATRIX modelMat;
 	};
 
-	Model m_quadModel;
-	Model m_cubeModel;
+	SimpleDXModel m_quadModel;
+	SimpleDXModel m_cubeModel;
 	DX11Shader m_simpleVertexShader;
 	DX11Shader m_simplePixelShader;
 	ComPtr<ID3D11RasterizerState> m_rasterState;

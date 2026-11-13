@@ -4,7 +4,7 @@
 #include"DXVertexManager.h"
 #include"Dx11Buffer.h"
 #include"Dx11RenderContext.h"
-class Model
+class SimpleDXModel
 {
 public:
 	void Init(VertexVersion expectedvertVersion, bool hasIndicies = false);
