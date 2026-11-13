@@ -151,6 +151,7 @@
     <ClCompile Include="SimpleCubeApplication.cpp" />
     <ClCompile Include="SimpleQuadApplication.cpp" />
     <ClCompile Include="SimpleTriangleApplication.cpp" />
+    <ClCompile Include="TexturedQuadApplication.cpp" />
     <ClCompile Include="VertexData.cpp" />
     <ClCompile Include="Win32WindMaker.cpp" />
     <ClCompile Include="windmaker.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="SimpleCubeApplication.h" />
     <ClInclude Include="SimpleQuadApplication.h" />
     <ClInclude Include="SimpleTriangleApplication.h" />
+    <ClInclude Include="TexturedQuadApplication.h" />
     <ClInclude Include="VertexData.h" />
     <ClInclude Include="Win32WindMaker.h" />
     <ClInclude Include="windmaker.h" />

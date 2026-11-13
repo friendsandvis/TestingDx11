@@ -5,6 +5,7 @@
 #include"SimpleTriangleApplication.h"
 #include"SimpleQuadApplication.h"
 #include"SimpleCubeApplication.h"
+#include "TexturedQuadApplication.h"
 #include<iostream>
 #define WINWIDTH 1920
 #define WINHEIGHT 1080
@@ -13,7 +14,8 @@ int main()
 	std::cout << "0.clearscreen.\n";
 	std::cout << "1.triangleApplication.\n";
 	std::cout << "2.quadApplication.\n";
-	std::cout << "3.cubeApplication.\n";
+	std::cout << "3.texturedquadApplication.\n";
+	std::cout << "4.cubeApplication.\n";
 	std::cout << "Enter App Number to run:-\n";
 	int appnumber;
 	std::cin >> appnumber;
@@ -40,6 +42,11 @@ int main()
 			break;
 		}
 		case 3:
+		{
+			dx11AppManager = new TexturedQuadApplication();
+			break;
+		}
+		case 4:
 		{
 			dx11AppManager = new SimpleCubeApplication();
 			break;

@@ -102,6 +102,9 @@
     <ClCompile Include="DXMathUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TexturedQuadApplication.cpp">
+      <Filter>applications</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="DXMathUtil.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedQuadApplication.h">
+      <Filter>applications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
