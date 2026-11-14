@@ -2,6 +2,9 @@
 #include"BasicModelManager.h"
 void TexturedQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
+	//load texture
+	DXTexManager::LoadTexture(L"textures/texlargemiped.dds", m_MainTexture.GetDXImageData());
+	bool texCreatedSuccess = m_MainTexture.Init(device);
 	//create shaders
 	m_simplePixelShader.Init(device, L"shaders/texturequad/PS.hlsl", ShaderType::PS, "main");
 	m_simpleVertexShader.Init(device, L"shaders/texturequad/VS.hlsl", ShaderType::VS, "main");

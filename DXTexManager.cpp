@@ -57,7 +57,8 @@ DXTexture::DXTexture(std::wstring externalTexfileName)
 }
 bool DXTexture::Init(ComPtr<ID3D11Device> creationdevice)
 {
-	return true;
+	 HRESULT res = CreateTexture(creationdevice.Get(), m_texdata.m_image.GetImages(), m_texdata.m_image.GetImageCount(), m_texdata.m_imagemetadata, m_resource.GetAddressOf());
+	 return (res == S_OK);
 }
 
 void DXTexture::UploadTexture()

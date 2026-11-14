@@ -18,6 +18,9 @@ public:
 	bool Init(ComPtr<ID3D11Device> creationdevice);
 	void UploadTexture();
 	std::wstring GetExternalTextureFileName() { return m_TextureFileName; }
+
+private:
+	ComPtr<ID3D11Resource> m_resource;
 };
 class DXTexManager
 {
@@ -28,5 +31,4 @@ public:
 	static bool IsTextureTransparent(const wchar_t* imagefile);
 
 private:
-
 };

@@ -5,6 +5,7 @@
 #include"VertexData.h"
 #include"DX11Shader.h"
 #include"Model.h"
+#include"DXTexManager.h"
 
 
 class TexturedQuadApplication : public DX11ApplicationManagerBase
@@ -36,5 +37,6 @@ private:
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
+	DXTexture m_MainTexture;
 
 };
