@@ -65,3 +65,8 @@ void DXTexture::UploadTexture()
 {
 
 }
+
+void DXTexture::CreateSRV(ComPtr<ID3D11Device> device,ComPtr<ID3D11ShaderResourceView>& outSRV)
+{
+	DXASSERT(device->CreateShaderResourceView(m_resource.Get(), nullptr, outSRV.GetAddressOf()))
+}

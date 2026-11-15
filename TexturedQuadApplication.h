@@ -38,5 +38,7 @@ private:
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 	DXTexture m_MainTexture;
+	ComPtr<ID3D11ShaderResourceView> m_MainTextureSRV;
+	ComPtr<ID3D11SamplerState> m_LinerSamplerState;
 
 };

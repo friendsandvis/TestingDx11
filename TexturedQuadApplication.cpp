@@ -5,6 +5,18 @@ void TexturedQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 	//load texture
 	DXTexManager::LoadTexture(L"textures/texlargemiped.dds", m_MainTexture.GetDXImageData());
 	bool texCreatedSuccess = m_MainTexture.Init(device);
+	m_MainTexture.CreateSRV(device, m_MainTextureSRV);
+	//create sampler
+	D3D11_SAMPLER_DESC mainSamplerDesc = {};
+	mainSamplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	mainSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+	mainSamplerDesc.MaxAnisotropy = 1;
+	mainSamplerDesc.MinLOD = 0.0f;
+	mainSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	DXASSERT(device->CreateSamplerState(&mainSamplerDesc, m_LinerSamplerState.GetAddressOf()))
 	//create shaders
 	m_simplePixelShader.Init(device, L"shaders/texturequad/PS.hlsl", ShaderType::PS, "main");
 	m_simpleVertexShader.Init(device, L"shaders/texturequad/VS.hlsl", ShaderType::VS, "main");
@@ -72,7 +84,7 @@ void TexturedQuadApplication::InitExtras(ComPtr<ID3D11Device> device)
 		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
 		m_VertexConstantBufferData.projMat = DirectX::XMMatrixOrthographicLH(m_swapchain.GetWidth(), m_swapchain.GetHeight(), 0.1f, 100.0f);
 		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
-		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixScaling(100.0f, 100.0f, 1.0f);
 		m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
 		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
 		vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
@@ -137,6 +149,8 @@ void TexturedQuadApplication::Render(RenderContext context)
 	//draw
 	context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
+	context.m_mainContext->PSSetSamplers(0, 1, m_LinerSamplerState.GetAddressOf());
+	context.m_mainContext->PSSetShaderResources(1, 1, m_MainTextureSRV.GetAddressOf());
 	m_quadModel.Draw(&context);
 	m_swapchain.Present();
 }

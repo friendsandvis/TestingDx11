@@ -18,6 +18,7 @@ public:
 	bool Init(ComPtr<ID3D11Device> creationdevice);
 	void UploadTexture();
 	std::wstring GetExternalTextureFileName() { return m_TextureFileName; }
+	void CreateSRV(ComPtr<ID3D11Device> device, ComPtr<ID3D11ShaderResourceView>& outSRV);
 
 private:
 	ComPtr<ID3D11Resource> m_resource;
