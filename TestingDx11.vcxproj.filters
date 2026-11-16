@@ -105,6 +105,9 @@
     <ClCompile Include="TexturedQuadApplication.cpp">
       <Filter>applications</Filter>
     </ClCompile>
+    <ClCompile Include="ModelTestApplication.cpp">
+      <Filter>applications</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windmaker.h">
@@ -201,6 +204,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TexturedQuadApplication.h">
+      <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelTestApplication.h">
       <Filter>applications</Filter>
     </ClInclude>
   </ItemGroup>
