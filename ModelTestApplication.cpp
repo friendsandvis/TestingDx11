@@ -1,4 +1,5 @@
 #include"ModelTestApplication.h"
+#include"BasicModelManager.h"
 //only 1 model define to be active at a time
 //conference.obj model cannot be submitted need to copy it manually in models directory from web everytime taking a fresh project code setup
 //#define USECONFERENCEROOMCOMPOUNDMODEL
@@ -28,70 +29,75 @@ void ModelTestApplication::PreRenderUpdate()
 
 void ModelTestApplication::Render(RenderContext context)
 {
-	//m_primarycmdlist.Reset(false, true, m_frameIdx);
-	bool uploadModelTextureData = false;
-#if defined(USESPHONZAMODEL) || defined(USEREVOLVERMODEL)
-	uploadModelTextureData = true;
-#endif //defined(USESPHONZAMODEL) || defined(USEREVOLVERMODEL)
-
-
-
-	//upload compoundmodel textures over frames or all at once
-	const bool loadModelTextureDataOverFrames = false;
-	if (uploadModelTextureData)
-	{
-			//need to do anything?
-	}
-	//XMMATRIX mvp = m_maincamera.GetMVP();
-	/*XMMATRIX orthoproj = XMMatrixOrthographicLH(2.0f, 2.0f, -1.0f, 1.0f);
-	XMMATRIX model = XMMatrixIdentity();
-	XMMATRIX mvp = XMMatrixMultiply(model, orthoproj);
-	XMMATRIX vpmat = m_maincamera.GetVP();
-	//m_trianglemodel.Draw(m_primarycmdlist,vpmat);*/
-	//a specialized way to test out model's material(diffuse textures) 
-	if (m_loadedcompoundmodel.SupportMaterial())
-	{
-		/*DX12DESCHEAP& loadedcompoundmodelmatsrvheap = m_loadedcompoundmodel.GetResourceviewHeap();
-		ID3D12DescriptorHeap* heapstoset[1] = { loadedcompoundmodelmatsrvheap.GetDescHeap() };
-		m_primarycmdlist->SetDescriptorHeaps(1, heapstoset);
-		m_primarycmdlist->SetGraphicsRootDescriptorTable(1, loadedcompoundmodelmatsrvheap.GetGPUHandleOffseted(0));*/
-	}
-#ifdef USETESTBASICMODELCUBE
-	{
-		//m_cubemodel.Draw(m_primarycmdlist, vpmat, 0, 2, true, true, true);
-		m_primarycmdlist->SetGraphicsRootConstantBufferView(0, m_CamConstBuffer.GetResource()->GetGPUVirtualAddress());
-		m_loadedmodel.Draw(m_primarycmdlist, m_maincamera.GetMatData(), m_CamConstBuffer, 2, true, true);
-	}
-	DXASSERT(m_primarycmdlist->Close())
-		BasicRender();
-	return;
-#endif
-	//we draw opaque non opaque with diffrent [pso only if compound model supports nonopaque otherwise all rendered by default pso.
-	//constant buffer view set before draw function called from outside not inside the draw function.
-	/*if (m_loadedcompoundmodel.SupportNonOpaqueMaterial())
-	{
-		//draw opaque models only with opaque pso and switch to alpha blending pso to render non opaque data
-		//constant buffer set as root CBV before drawing and the buffer itself is updated inside draw
-		m_primarycmdlist->SetGraphicsRootConstantBufferView(0, m_CamConstBuffer.GetResource()->GetGPUVirtualAddress());
-		m_loadedcompoundmodel.Draw(m_primarycmdlist, m_maincamera.GetMatData(), m_CamConstBuffer, 2, true, false);
-		m_primarycmdlist->SetPipelineState(m_pso_alphablending.GetPSO());
-		m_primarycmdlist->SetGraphicsRootSignature(m_pso_alphablending.GetRootSignature());
-		m_loadedcompoundmodel.Draw(m_primarycmdlist, m_maincamera.GetMatData(), m_CamConstBuffer, 2, false, true);
-	}
-	else
-	{
-		//m_loadedcompoundmodel.Draw(m_primarycmdlist, vpmat, 0, 2, true, true);//old way unsupported by shader.
-		m_primarycmdlist->SetGraphicsRootConstantBufferView(0, m_CamConstBuffer.GetResource()->GetGPUVirtualAddress());
-		m_loadedcompoundmodel.Draw(m_primarycmdlist, m_maincamera.GetMatData(), m_CamConstBuffer, 2, true, true);
-	}
-
-	DXASSERT(m_primarycmdlist->Close())*/
+	context.m_mainContext->OMSetRenderTargets(1, m_swapchain.GetBackBufferRTV().GetAddressOf(), m_depthStencilView.Get());
+	D3D11_RECT scissorRect = GetScissorRect();
+	context.m_mainContext->RSSetScissorRects(1, &scissorRect);
+	D3D11_VIEWPORT viewport = GetViewport();
+	context.m_mainContext->RSSetViewports(1, &viewport);
+	float clearcolour[4] = { 0.0f,1.0f,1.0f,1.0f };
+	context.m_mainContext->ClearRenderTargetView(m_swapchain.GetBackBufferRTV().Get(), clearcolour);
+	context.m_mainContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH, 1.0f, 0);
+	context.m_mainContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//common states setup
+	context.m_mainContext->IASetInputLayout(m_inputLayout.Get());
+	context.m_mainContext->RSSetState(m_rasterState.Get());
+	context.m_mainContext->OMSetBlendState(m_blendState.Get(), nullptr, 0xffffffff);
+	context.m_mainContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
+	//shader
+	context.m_mainContext->VSSetShader(m_simpleVertexShader.GetVertexShader().Get(), NULL, 0);
+	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
+	//draw
+	//context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
+	//context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
 	//add rendering logic for model
 	m_swapchain.Present();
 }
 
 void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
+	BasicModelManager_Old::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);
+	//create depth stencil resource and dsv
+	{
+		D3D11_TEXTURE2D_DESC depthStencilTexDesc = {};
+		depthStencilTexDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+		depthStencilTexDesc.Width = m_swapchain.GetWidth();
+		depthStencilTexDesc.Height = m_swapchain.GetHeight();
+		depthStencilTexDesc.MipLevels = 1;
+		depthStencilTexDesc.ArraySize = 1;
+		depthStencilTexDesc.SampleDesc.Count = 1;
+		depthStencilTexDesc.SampleDesc.Quality = 0;
+		depthStencilTexDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+		depthStencilTexDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+		depthStencilTexDesc.CPUAccessFlags = 0;
+		depthStencilTexDesc.MiscFlags = 0;
+		DXASSERT(device->CreateTexture2D(&depthStencilTexDesc, nullptr, m_depthStencilTex.GetAddressOf()))
+			DXASSERT(device->CreateDepthStencilView(m_depthStencilTex.Get(), nullptr, m_depthStencilView.GetAddressOf()))
+	}
+	//depth stencil state
+	{
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc = {};
+		depthStencilStateDesc.DepthEnable = TRUE;
+		depthStencilStateDesc.StencilEnable = FALSE;
+		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+		device->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf());
+
+	}
+	//create quad model data
+	{
+		std::vector<VertexBase*> verticies;
+		std::vector<unsigned int> indicies;
+		BasicModelManager::GetQuadModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
+		m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
+		m_quadModel.SetVertexData(verticies, true);
+		m_quadModel.SetIndexData(indicies);
+		m_quadModel.CreateVertexBuffer(device);
+		m_quadModel.CreateIndexBuffer(device);
+		m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
+	}
+	//create shaders
+	m_simplePixelShader.Init(device, L"shaders/simplecube/PS.hlsl", ShaderType::PS, "main");
+	m_simpleVertexShader.Init(device, L"shaders/simplecube/VS.hlsl", ShaderType::VS, "main");
 	//camera setup
 	{
 		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
@@ -103,20 +109,44 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 		m_Maincamera.Reset(camPos, targetPos, viewWidth, viewHeight, nearPlane, farPlane);
 		m_maincameracontroller.SetCameratoControl(&m_Maincamera);
 	}
-	BasicModelManager::InitCamConstBuffer(device, m_CamConstBuffer);
-	BasicModelManager::LoadModel(device, "models/cube.dae", m_loadedmodel, VERTEXVERSION2);
+
+	//raster state
+	D3D11_RASTERIZER_DESC rasterDesc = {};
+	rasterDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	rasterDesc.DepthClipEnable = FALSE;
+	rasterDesc.ScissorEnable = FALSE;
+	rasterDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
+	rasterDesc.FrontCounterClockwise = FALSE;
+	rasterDesc.DepthClipEnable = TRUE;
+	DXASSERT(device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf()))
+		//input layout
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescs;
+	m_quadModel.BuildInputElementDesc(inputElementDescs);
+	ComPtr<ID3DBlob> vsCompiledCode = m_simpleVertexShader.GetCompiledCode();
+	assert(vsCompiledCode->GetBufferPointer() != nullptr);
+	DXASSERT(device->CreateInputLayout(inputElementDescs.data(), inputElementDescs.size(), vsCompiledCode->GetBufferPointer(), vsCompiledCode->GetBufferSize(), m_inputLayout.GetAddressOf()))
+
+		//blendstate
+		D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	for (unsigned int i = 0; i < 8; i++)
+	{
+		blendDesc.RenderTarget[i].BlendEnable = FALSE;
+		blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+	DXASSERT(device->CreateBlendState(&blendDesc, m_blendState.GetAddressOf()))
+	//BasicModelManager::LoadModel(device, "models/cube.dae", m_loadedmodel, VERTEXVERSION2);
 #ifdef USECONFERENCEROOMCOMPOUNDMODEL
 	float scalefactor = 0.01f;
 	XMMATRIX scalemat = XMMatrixScalingFromVector(XMVectorSet(scalefactor, scalefactor, scalefactor, 1.0f));
 	BasicModelManager::LoadModel(device, "models/conference.obj", m_loadedcompoundmodel, VERTEXVERSION2);
 	m_loadedcompoundmodel.Extratransform(scalemat);
 #endif // USECONFERENCEROOMCOMPOUNDMODEL
-
-
 #if defined(USESPHONZAMODEL)
 	float scalefactor = 1.0f;
 	XMMATRIX scalemat = XMMatrixScalingFromVector(XMVectorSet(scalefactor, scalefactor, scalefactor, 1.0f));
-	BasicModelManager::LoadModel(device, "models/Sponza.gltf", m_loadedcompoundmodel, VERTEXVERSION3, L"textures/modeltextures/sponza/", true);
+	//BasicModelManager::LoadModel(device, "models/Sponza.gltf", m_loadedcompoundmodel, VERTEXVERSION3, L"textures/modeltextures/sponza/", true);
 #endif//defined(USESPHONZAMODEL)
 #ifdef USECUBEMODEL
 	BasicModelManager::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);
@@ -136,17 +166,27 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 
 
 
-	BasicModelManager::InitTriangleModel(device, m_trianglemodel);
-	BasicModelManager::InitPlaneModel(device, m_planemodel);
-	BasicModelManager::InitCubeModel(device, m_cubemodel, VertexVersion::VERTEXVERSION3);
+	//BasicModelManager::InitTriangleModel(device, m_trianglemodel);
+	//BasicModelManager::InitPlaneModel(device, m_planemodel);
+	//create cube model data
+	{
+		std::vector<VertexBase*> verticies;
+		std::vector<unsigned int> indicies;
+		BasicModelManager::GetCubeModelVerticiesIndexed(verticies, indicies, VertexVersion::VERTEXVERSION0);
+		m_cubeModel.Init(VertexVersion::VERTEXVERSION0, true);
+		m_cubeModel.SetVertexData(verticies, true);
+		m_cubeModel.SetIndexData(indicies);
+		m_cubeModel.CreateVertexBuffer(device);
+		m_cubeModel.CreateIndexBuffer(device);
+	}
 	Model::MaterialConstants cubeMaterialConstants = m_cubemodel.GetMaterialConstants();
 	cubeMaterialConstants.texsrvidx = 0;//arbatary unused for test cube model.
 	m_cubemodel.SetMaterialConstants(cubeMaterialConstants);
 
-	m_planemodel.UploadModelDatatoBuffers();
+	/*m_planemodel.UploadModelDatatoBuffers();
 	m_cubemodel.UploadModelDatatoBuffers();
 	m_loadedmodel.UploadModelDatatoBuffers();
-	m_loadedcompoundmodel.UploadModelDatatoBuffers();
+	m_loadedcompoundmodel.UploadModelDatatoBuffers();*/
 }
 
 void ModelTestApplication::ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

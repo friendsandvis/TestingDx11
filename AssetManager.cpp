@@ -273,7 +273,7 @@ void Model::Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer&
 
 	//update buffer for camconst
 	{
-		BasicModelManager::UpdateCamConstBufferForModel(*this, m_shadertransformconsts, camConstBuffer);
+		BasicModelManager_Old::UpdateCamConstBufferForModel(*this, m_shadertransformconsts, camConstBuffer);
 	}
 	if (supportmaterial)
 	{
@@ -1220,7 +1220,7 @@ void CompoundModel::UpdateTexUploadInfoSRVcreationData(vector< ModelMaterial::Te
 
 
 
-void BasicModelManager::InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Model& planemodel)
+void BasicModelManager_Old::InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Model& planemodel)
 {
 	vector<VertexBase*> verticies;
 	GetPlaneVerticiesV0(verticies);
@@ -1229,7 +1229,7 @@ void BasicModelManager::InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Mod
 	planemodel.InitIndexBuffer(creationdevice, planeindicies);
 	planemodel.UploadModelDatatoBuffers();
 }
-void BasicModelManager::InitCubeModel(ComPtr< ID3D11Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion)
+void BasicModelManager_Old::InitCubeModel(ComPtr< ID3D11Device> creationdevice, Model& cubemodel, VertexVersion vertexVersion)
 {
 	vector<VertexBase*> verticies;
 	if (vertexVersion == VertexVersion::VERTEXVERSION0)
@@ -1247,7 +1247,7 @@ void BasicModelManager::InitCubeModel(ComPtr< ID3D11Device> creationdevice, Mode
 	}
 	cubemodel.UploadModelDatatoBuffers();
 }
-void BasicModelManager::InitTriangleModel(ComPtr< ID3D11Device> creationdevice, Model& trianglemodel)
+void BasicModelManager_Old::InitTriangleModel(ComPtr< ID3D11Device> creationdevice, Model& trianglemodel)
 {
 	
 	vector<VertexBase*> verticies;
@@ -1258,19 +1258,19 @@ void BasicModelManager::InitTriangleModel(ComPtr< ID3D11Device> creationdevice, 
 	trianglemodel.UploadModelDatatoBuffers();
 }
 
-void BasicModelManager::LoadModel(ComPtr< ID3D11Device> creationdevice,std::string modelfilepath, Model& outmodel,VertexVersion requiredvertexversion)
+void BasicModelManager_Old::LoadModel(ComPtr< ID3D11Device> creationdevice,std::string modelfilepath, Model& outmodel,VertexVersion requiredvertexversion)
 {
 	AssimpManager assimpmodel(modelfilepath);
 	outmodel.Init(creationdevice,assimpmodel.GetProcessedModel(),0, requiredvertexversion);
 }
-void BasicModelManager::LoadModel(ComPtr< ID3D11Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath, bool supportmaterial)
+void BasicModelManager_Old::LoadModel(ComPtr< ID3D11Device> creationdevice, std::string modelfilepath, CompoundModel& outmodel, VertexVersion requiredvertexversion, wstring texfilepath, bool supportmaterial)
 {
 	AssimpManager assimpmodel(modelfilepath, texfilepath);
 	outmodel.SetTexPath(texfilepath);
 	outmodel.Init(creationdevice, assimpmodel.GetProcessedModel(), requiredvertexversion,supportmaterial);
 }
 
-void BasicModelManager::GetPlaneVerticiesV0(vector<VertexBase*>& outverticies)
+void BasicModelManager_Old::GetPlaneVerticiesV0(vector<VertexBase*>& outverticies)
 {
 	/*
 	//0(left-top)
@@ -1304,7 +1304,7 @@ void BasicModelManager::GetPlaneVerticiesV0(vector<VertexBase*>& outverticies)
 
 }
 
-void BasicModelManager::GetCubeVerticiesV0(vector<VertexBase*>& outverticies)
+void BasicModelManager_Old::GetCubeVerticiesV0(vector<VertexBase*>& outverticies)
 {
 	
 
@@ -1349,7 +1349,7 @@ void BasicModelManager::GetCubeVerticiesV0(vector<VertexBase*>& outverticies)
 	vert->m_uv = { 0.0,0.0f };
 	outverticies.push_back(vert);
 }
-void BasicModelManager::GetCubeVerticiesV3(vector<VertexBase*>& outverticies)
+void BasicModelManager_Old::GetCubeVerticiesV3(vector<VertexBase*>& outverticies)
 {
 	int numvalues = sizeof(cubeverticicesV3) / sizeof(float);
 	const int numValuesperVertex = 8;
@@ -1365,7 +1365,7 @@ void BasicModelManager::GetCubeVerticiesV3(vector<VertexBase*>& outverticies)
 		outverticies.push_back(vert);
 	}
 }
-void BasicModelManager::GetTriangleVerticiesV0(vector<VertexBase*>& outverticies)
+void BasicModelManager_Old::GetTriangleVerticiesV0(vector<VertexBase*>& outverticies)
 {
 	//0(center-top)
 	VertexV0* vert = new VertexV0();
@@ -1384,7 +1384,7 @@ void BasicModelManager::GetTriangleVerticiesV0(vector<VertexBase*>& outverticies
 	outverticies.push_back(vert);
 	
 }
-void BasicModelManager::GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertexdata)
+void BasicModelManager_Old::GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertexdata)
 {
 	vector<VertexBase*> verticies;
 	GetTriangleVerticiesV0(verticies);
@@ -1399,7 +1399,7 @@ void BasicModelManager::GetTriangleRTVertexData(vector<RTVertexDataV0>& rtvertex
 	}
 }
 
-void BasicModelManager::BuildBasicCameraDataRootConstantParameterCommon()
+void BasicModelManager_Old::BuildBasicCameraDataRootConstantParameterCommon()
 {/*
 
 	D3D12_ROOT_PARAMETER rootParamCamConst = {};
@@ -1423,7 +1423,7 @@ void BasicModelManager::BuildBasicCameraDataRootConstantParameterCommon()
 	return rootParamCamConst;
 }
 
-void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const CameraMatriciesData& camMatData, DX12Buffer& camConstBuffer)
+void BasicModelManager_Old::UpdateCamConstBufferForModel(Model& aModel, const CameraMatriciesData& camMatData, DX12Buffer& camConstBuffer)
 {
 	ShaderTransformConstants_GeneralComplete camConstData = {};
 	camConstData.model = aModel.GetTransform();
@@ -1440,7 +1440,7 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Camera
 
 */}
 
-void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX11Buffer& camConstBuffer)
+void BasicModelManager_Old::UpdateCamConstBufferForModel(Model& aModel, const ShaderTransformConstants_GeneralComplete& transformConstantData, DX11Buffer& camConstBuffer)
 {/*
 	//update data in buffer
 	BufferMapParams camConstwriteparams = {};
@@ -1451,7 +1451,7 @@ void BasicModelManager::UpdateCamConstBufferForModel(Model& aModel, const Shader
 	camConstBuffer.UnMap(camConstwriteparams);
 
 */}
-void BasicModelManager::InitCamConstBuffer(ComPtr< ID3D11Device> creationDevice, DX11Buffer& camConstBuffer)
+void BasicModelManager_Old::InitCamConstBuffer(ComPtr< ID3D11Device> creationDevice, DX11Buffer& camConstBuffer)
 {/*
 	DX12ResourceCreationProperties camConstDataBufferProps;
 	DX12Buffer::InitResourceCreationProperties(camConstDataBufferProps);

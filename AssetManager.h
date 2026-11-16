@@ -242,7 +242,7 @@ private:
 	void UpdateTexUploadInfoSRVcreationData(vector< ModelMaterial::TextureUploadInfo>& texUploadInfos, DXTexture* targetTexture, D3D12_SHADER_RESOURCE_VIEW_DESC& srvdesc, D3D12_CPU_DESCRIPTOR_HANDLE srvDescHandle);
 };
 
-class BasicModelManager
+class BasicModelManager_Old
 {
 public:
 	static void InitPlaneModel(ComPtr< ID3D11Device> creationdevice, Model& planemodel);
@@ -261,4 +261,3 @@ private:
 	static void GetCubeVerticiesV3(vector<VertexBase*>& outverticies);
 	static void GetTriangleVerticiesV0(vector<VertexBase*>& outverticies);
 };
-

@@ -6,6 +6,7 @@
 #include"SimpleQuadApplication.h"
 #include"SimpleCubeApplication.h"
 #include "TexturedQuadApplication.h"
+#include "ModelTestApplication.h"
 #include<iostream>
 #define WINWIDTH 1920
 #define WINHEIGHT 1080
@@ -16,6 +17,7 @@ int main()
 	std::cout << "2.quadApplication.\n";
 	std::cout << "3.texturedquadApplication.\n";
 	std::cout << "4.cubeApplication.\n";
+	std::cout << "5.modelTestApplication.\n";
 	std::cout << "Enter App Number to run:-\n";
 	int appnumber;
 	std::cin >> appnumber;
@@ -49,6 +51,11 @@ int main()
 		case 4:
 		{
 			dx11AppManager = new SimpleCubeApplication();
+			break;
+		}
+		case 5:
+		{
+			dx11AppManager = new ModelTestApplication();
 			break;
 		}
 	}
