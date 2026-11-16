@@ -122,6 +122,7 @@ public:
 	void Draw(RenderContext context, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex,UINT materialconstsrootparamindex,bool usemodelmatrix=true,bool setmvpmatrix=true,bool supportmaterial=false,unsigned int instanceCount = 1);
 	void Draw(RenderContext context, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
 	void Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
+	void Draw(RenderContext context);
 	void Extratransform(XMMATRIX extratransformmat);
 	Model(ModelDataUploadMode uploadmode=NOCOPY);
 	~Model();
@@ -197,6 +198,7 @@ public:
 	void Draw(RenderContext context, XMMATRIX vpmatrix,UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex=2, bool drawOpaque = true,bool drawNonOpaque = true);
 	void Draw(RenderContext context, CameraMatriciesData camData, UINT mvpmatrixrootparamindex, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
 	void Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex = 2, bool drawOpaque = true, bool drawNonOpaque = true);
+	void Draw(RenderContext context);
 	void UploadModelDatatoBuffers();
 	void UploadModelDatatoGPUBuffers(RenderContext context);
 	void UploadModelDataDefaultTexture(RenderContext context);

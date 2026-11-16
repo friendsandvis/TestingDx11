@@ -1684,3 +1684,13 @@ void ModelMaterial::LoadTextureData(DXTexture* texptr)
 		m_metalnesstextureDataLoaded = true;
 	}
 }
+
+void CompoundModel::Draw(RenderContext context)
+{
+	
+}
+
+void Model::Draw(RenderContext context)
+{
+
+}
