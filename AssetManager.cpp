@@ -1685,12 +1685,59 @@ void ModelMaterial::LoadTextureData(DXTexture* texptr)
 	}
 }
 
-void CompoundModel::Draw(RenderContext context)
+void CompoundModel::Draw(RenderContext* context)
 {
-	
+	bool drawOpaque = true;
+	bool drawNonOpaque = true;
+	vector<Model*> opaqueModels, nonOpaqueModels;
+	for (size_t i = 0; i < m_models.size(); i++)
+	{
+		//if not supporting nonopaque materials for this compound model then all models are sent to opaque node list
+		if (m_models[i]->HasOpaqueMaterial() && m_supportNonOpaqueMaterial)
+		{
+			opaqueModels.push_back(m_models[i]);
+		}
+		else
+		{
+			nonOpaqueModels.push_back(m_models[i]);
+		}
+	}
+	//draw opaque models
+	if (drawOpaque)
+	{
+		for (size_t i = 0; i < opaqueModels.size(); i++)
+		{
+			opaqueModels[i]->Draw(context);
+		}
+	}
+	//draw nonopaque models
+	if (drawNonOpaque)
+	{
+		for (size_t i = 0; i < nonOpaqueModels.size(); i++)
+		{
+			nonOpaqueModels[i]->Draw(context);
+		}
+	}
 }
 
-void Model::Draw(RenderContext context)
+void Model::Draw(RenderContext* context)
 {
+	//setup vertex index buffer and layout
+	VertexVersionInfo vertInfo = DXVertexManager::GetVertexVersionInfo(m_vertexversion);
+	UINT v_stride = vertInfo.stride;
+	UINT v_offset = 0;
+	context->m_mainContext->IASetVertexBuffers(0, 1, GetVertexBuffer().GetDXBuffer().GetAddressOf(), &v_stride, &v_offset);
+	if (HasIndexBuffer())
+	{
+		context->m_mainContext->IASetIndexBuffer(GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	}
 
+	if (HasIndexBuffer())
+	{
+		context->m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);
+	}
+	else
+	{
+		context->m_mainContext->Draw(GetVerticiesCount(), 0);
+	}
 }
