@@ -66,6 +66,7 @@ void ModelTestApplication::Render(RenderContext context)
 	//context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
 	//add rendering logic for model
+	m_loadedcompoundmodel.Draw(&context);
 	m_swapchain.Present();
 }
 
@@ -91,7 +92,7 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
 		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
 		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
-		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+		XMMATRIX scaleMat = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f);
 		m_VertexConstantBufferData.modelMat = scaleMat;
 		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
 		vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);

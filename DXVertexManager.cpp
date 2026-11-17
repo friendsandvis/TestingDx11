@@ -153,6 +153,9 @@ VertexVersionInfo DXVertexManager::GetVertexVersionInfo(VertexVersion vertVersio
 	case VertexVersion::VERTEXVERSION0:
 		vertInfo.stride = sizeof(float) * 5;//3f pos, 2f uv
 		break;
+	case VertexVersion::VERTEXVERSION2:
+		vertInfo.stride = sizeof(float) * 6;//3f pos, 3f normal
+		break;
 	}
 	return vertInfo;
 }
