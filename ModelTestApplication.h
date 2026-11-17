@@ -24,6 +24,13 @@ private:
 	{
 		unsigned int usematerialtextures;
 	};
+
+	struct VertexConstantBuffer
+	{
+		DirectX::XMMATRIX viewMat;
+		DirectX::XMMATRIX projMat;
+		DirectX::XMMATRIX modelMat;
+	};
 	Model m_planemodel, m_trianglemodel;
 	Model m_cubemodel;
 	Model m_loadedmodel;
@@ -40,4 +47,6 @@ private:
 	ComPtr<ID3D11BlendState> m_blendState;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
+	VertexConstantBuffer m_VertexConstantBufferData;
+	ComPtr<ID3D11Buffer> m_vsConstantBuffer;
 };

@@ -29,6 +29,22 @@ void ModelTestApplication::PreRenderUpdate()
 
 void ModelTestApplication::Render(RenderContext context)
 {
+	//update vertex constants
+	{
+		D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+		DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+			XMMATRIX scaleMat = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f);
+		//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
+		XMMATRIX translateMat = DirectX::XMMatrixTranslation(-0.3f, 0.5f, 2.0f);
+		m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
+		m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
+		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
+		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
+		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
+		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
+		memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
+		context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+	}
 	context.m_mainContext->OMSetRenderTargets(1, m_swapchain.GetBackBufferRTV().GetAddressOf(), m_depthStencilView.Get());
 	D3D11_RECT scissorRect = GetScissorRect();
 	context.m_mainContext->RSSetScissorRects(1, &scissorRect);
@@ -48,13 +64,49 @@ void ModelTestApplication::Render(RenderContext context)
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
 	//draw
 	//context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
-	//context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
+	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
 	//add rendering logic for model
 	m_swapchain.Present();
 }
 
 void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
+	//camera setup
+	{
+		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
+		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+		float nearPlane = 0.01f;
+		float farPlane = 100.0f;
+		float viewWidth = static_cast<float>(m_swapchain.GetWidth());
+		float viewHeight = static_cast<float>(m_swapchain.GetHeight());
+		m_Maincamera.Reset(camPos, targetPos, viewWidth, viewHeight, nearPlane, farPlane);
+		m_maincameracontroller.SetCameratoControl(&m_Maincamera);
+	}
+
+	{
+		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.projMat = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
+		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
+		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
+		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
+		XMMATRIX scaleMat = DirectX::XMMatrixScaling(50.0f, 50.0f, 1.0f);
+		m_VertexConstantBufferData.modelMat = scaleMat;
+		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
+		vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
+		vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+		vsConstantBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+		vsConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+		vsConstantBufferDesc.MiscFlags = 0;
+		vsConstantBufferDesc.StructureByteStride = sizeof(VertexConstantBuffer);
+		D3D11_SUBRESOURCE_DATA vsConstantB8ufferSubresData = { 0 };
+		vsConstantB8ufferSubresData.pSysMem = &m_VertexConstantBufferData;
+		vsConstantB8ufferSubresData.SysMemPitch = 0;
+		vsConstantB8ufferSubresData.SysMemSlicePitch = 0;
+		DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_vsConstantBuffer.GetAddressOf()))
+	}
+
 	BasicModelManager_Old::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);
 	//create depth stencil resource and dsv
 	{
@@ -96,19 +148,8 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 		m_quadModel.Init(VertexVersion::VERTEXVERSION0, true);
 	}
 	//create shaders
-	m_simplePixelShader.Init(device, L"shaders/simplecube/PS.hlsl", ShaderType::PS, "main");
-	m_simpleVertexShader.Init(device, L"shaders/simplecube/VS.hlsl", ShaderType::VS, "main");
-	//camera setup
-	{
-		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
-		DirectX::XMVECTOR targetPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-		float nearPlane = 0.01f;
-		float farPlane = 100.0f;
-		float viewWidth = static_cast<float>(m_swapchain.GetWidth());
-		float viewHeight = static_cast<float>(m_swapchain.GetHeight());
-		m_Maincamera.Reset(camPos, targetPos, viewWidth, viewHeight, nearPlane, farPlane);
-		m_maincameracontroller.SetCameratoControl(&m_Maincamera);
-	}
+	m_simplePixelShader.Init(device, L"shaders/modeltesting/PS.hlsl", ShaderType::PS, "main");
+	m_simpleVertexShader.Init(device, L"shaders/modeltesting/VS.hlsl", ShaderType::VS, "main");
 
 	//raster state
 	D3D11_RASTERIZER_DESC rasterDesc = {};
@@ -183,10 +224,6 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 	cubeMaterialConstants.texsrvidx = 0;//arbatary unused for test cube model.
 	m_cubemodel.SetMaterialConstants(cubeMaterialConstants);
 
-	/*m_planemodel.UploadModelDatatoBuffers();
-	m_cubemodel.UploadModelDatatoBuffers();
-	m_loadedmodel.UploadModelDatatoBuffers();
-	m_loadedcompoundmodel.UploadModelDatatoBuffers();*/
 }
 
 void ModelTestApplication::ProcessWindowProcEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
