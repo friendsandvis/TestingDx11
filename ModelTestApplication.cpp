@@ -32,18 +32,18 @@ void ModelTestApplication::Render(RenderContext context)
 	//update vertex constants
 	{
 		D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
-		DXASSERT(context.m_mainContext->Map(m_vsConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+		DXASSERT(context.m_mainContext->Map(m_transformConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
 			XMMATRIX scaleMat = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f);
 		//translation diffrent from quad 1 just by z to test depth testing(render only based on depth validity)
 		XMMATRIX translateMat = DirectX::XMMatrixTranslation(-0.3f, 0.5f, 2.0f);
-		m_VertexConstantBufferData.modelMat = scaleMat * translateMat;
-		m_VertexConstantBufferData.modelMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.modelMat);
-		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
-		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
-		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
-		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
-		memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(VertexConstantBuffer));
-		context.m_mainContext->Unmap(m_vsConstantBuffer.Get(), 0);
+		m_VertexConstantBufferData.model = scaleMat * translateMat;
+		m_VertexConstantBufferData.model = ProcessMatrixForShaderUse(m_VertexConstantBufferData.model);
+		m_VertexConstantBufferData.view = m_Maincamera.GetViewMat();
+		m_VertexConstantBufferData.view = ProcessMatrixForShaderUse(m_VertexConstantBufferData.view);
+		m_VertexConstantBufferData.projection = m_Maincamera.GetProjectionMat(false);
+		m_VertexConstantBufferData.projection = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projection);
+		memcpy(vertexConstBufferMapped.pData, &m_VertexConstantBufferData, sizeof(ShaderTransformConstants_GeneralComplete));
+		context.m_mainContext->Unmap(m_transformConstantBuffer.Get(), 0);
 	}
 	context.m_mainContext->OMSetRenderTargets(1, m_swapchain.GetBackBufferRTV().GetAddressOf(), m_depthStencilView.Get());
 	D3D11_RECT scissorRect = GetScissorRect();
@@ -64,9 +64,9 @@ void ModelTestApplication::Render(RenderContext context)
 	context.m_mainContext->PSSetShader(m_simplePixelShader.GetPixelShader().Get(), NULL, 0);
 	//draw
 	//context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
-	context.m_mainContext->VSSetConstantBuffers(1, 1, m_vsConstantBuffer.GetAddressOf());
+	context.m_mainContext->VSSetConstantBuffers(0, 1, m_transformConstantBuffer.GetAddressOf());
 	//add rendering logic for model
-	m_loadedcompoundmodel.Draw(&context);
+	m_loadedcompoundmodel.Draw(&context, m_transformConstantBuffer);
 	m_swapchain.Present();
 }
 
@@ -85,27 +85,27 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 	}
 
 	{
-		m_VertexConstantBufferData.viewMat = DirectX::XMMatrixIdentity();
-		m_VertexConstantBufferData.projMat = DirectX::XMMatrixIdentity();
-		m_VertexConstantBufferData.modelMat = DirectX::XMMatrixIdentity();
-		m_VertexConstantBufferData.viewMat = m_Maincamera.GetViewMat();
-		m_VertexConstantBufferData.viewMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.viewMat);
-		m_VertexConstantBufferData.projMat = m_Maincamera.GetProjectionMat(false);
-		m_VertexConstantBufferData.projMat = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projMat);
+		m_VertexConstantBufferData.view = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.projection = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.model = DirectX::XMMatrixIdentity();
+		m_VertexConstantBufferData.view = m_Maincamera.GetViewMat();
+		m_VertexConstantBufferData.view = ProcessMatrixForShaderUse(m_VertexConstantBufferData.view);
+		m_VertexConstantBufferData.projection = m_Maincamera.GetProjectionMat(false);
+		m_VertexConstantBufferData.projection = ProcessMatrixForShaderUse(m_VertexConstantBufferData.projection);
 		XMMATRIX scaleMat = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f);
-		m_VertexConstantBufferData.modelMat = scaleMat;
+		m_VertexConstantBufferData.model = scaleMat;
 		D3D11_BUFFER_DESC vsConstantBufferDesc = { 0 };
-		vsConstantBufferDesc.ByteWidth = sizeof(VertexConstantBuffer);
+		vsConstantBufferDesc.ByteWidth = sizeof(SHADERTRANSFORMCONSTANTSSTRUCT);
 		vsConstantBufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 		vsConstantBufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
 		vsConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 		vsConstantBufferDesc.MiscFlags = 0;
-		vsConstantBufferDesc.StructureByteStride = sizeof(VertexConstantBuffer);
+		vsConstantBufferDesc.StructureByteStride = sizeof(SHADERTRANSFORMCONSTANTSSTRUCT);
 		D3D11_SUBRESOURCE_DATA vsConstantB8ufferSubresData = { 0 };
 		vsConstantB8ufferSubresData.pSysMem = &m_VertexConstantBufferData;
 		vsConstantB8ufferSubresData.SysMemPitch = 0;
 		vsConstantB8ufferSubresData.SysMemSlicePitch = 0;
-		DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_vsConstantBuffer.GetAddressOf()))
+		DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_transformConstantBuffer.GetAddressOf()))
 	}
 
 	BasicModelManager_Old::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);

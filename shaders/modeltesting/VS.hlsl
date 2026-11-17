@@ -10,11 +10,12 @@ struct VSOut
     float4 color : COLOUR0;
 	float2 uv:UV;
 };
-cbuffer VertexConstants : register(b1)
+cbuffer VertexConstants : register(b0)
 {
+	float4x4 mvpMat;
+	float4x4 modelMat;
 	float4x4 viewMat;
 	float4x4 projMat;
-	float4x4 modelMat;
 }
 VSOut main(VSIn input)
 {

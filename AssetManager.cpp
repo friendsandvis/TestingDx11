@@ -1685,7 +1685,7 @@ void ModelMaterial::LoadTextureData(DXTexture* texptr)
 	}
 }
 
-void CompoundModel::Draw(RenderContext* context)
+void CompoundModel::Draw(RenderContext* context, ComPtr<DX11Buffer> transformConstantBuffer)
 {
 	bool drawOpaque = true;
 	bool drawNonOpaque = true;
@@ -1707,7 +1707,7 @@ void CompoundModel::Draw(RenderContext* context)
 	{
 		for (size_t i = 0; i < opaqueModels.size(); i++)
 		{
-			opaqueModels[i]->Draw(context);
+			opaqueModels[i]->Draw(context, transformConstantBuffer);
 		}
 	}
 	//draw nonopaque models
@@ -1715,12 +1715,12 @@ void CompoundModel::Draw(RenderContext* context)
 	{
 		for (size_t i = 0; i < nonOpaqueModels.size(); i++)
 		{
-			nonOpaqueModels[i]->Draw(context);
+			nonOpaqueModels[i]->Draw(context,transformConstantBuffer);
 		}
 	}
 }
 
-void Model::Draw(RenderContext* context)
+void Model::Draw(RenderContext* context, ComPtr<DX11Buffer> transformConstantBuffer)
 {
 	//setup vertex index buffer and layout
 	VertexVersionInfo vertInfo = DXVertexManager::GetVertexVersionInfo(m_vertexversion);
