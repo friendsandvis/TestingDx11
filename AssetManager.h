@@ -130,6 +130,7 @@ public:
 	void Draw(RenderContext context, CameraMatriciesData camData, DX11Buffer& camConstBuffer, UINT materialconstsrootparamindex, bool usemodelmatrix = true, bool setmvpmatrix = true, bool supportmaterial = false, unsigned int instanceCount = 1);
 	void Draw(RenderContext* context, ComPtr<ID3D11Buffer> transformConstantBuffer, SHADERTRANSFORMCONSTANTSSTRUCT basicTransformConstants);
 	void Extratransform(XMMATRIX extratransformmat);
+	static void UpdateTransformConstants(RenderContext* context, ComPtr<ID3D11Buffer> transformConstantBuffer, SHADERTRANSFORMCONSTANTSSTRUCT basicTransformConstants, XMMATRIX NewmodelMatrix);
 	Model(ModelDataUploadMode uploadmode=NOCOPY);
 	~Model();
 	void Init(ComPtr< ID3D11Device> creationdevice,AssimpLoadedModel& assimpModel,UINT meshindexinassimpmodeltoload,VertexVersion modelvertexversion,bool supportmaterial =false);

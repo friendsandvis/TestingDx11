@@ -405,6 +405,20 @@ void Model::InitVertexBuffer(ComPtr< ID3D11Device> creationdevice, vector<Vertex
 
 
 }
+void Model::UpdateTransformConstants(RenderContext* context, ComPtr<ID3D11Buffer> transformConstantBuffer, SHADERTRANSFORMCONSTANTSSTRUCT basicTransformConstants, XMMATRIX NewmodelMatrix)
+{
+	basicTransformConstants.model = NewmodelMatrix;
+	basicTransformConstants.model = ProcessMatrixForShaderUse(basicTransformConstants.model);
+	//update transform buffer
+	//update vertex constants
+	{
+		D3D11_MAPPED_SUBRESOURCE vertexConstBufferMapped = {};
+		DXASSERT(context->m_mainContext->Map(transformConstantBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &vertexConstBufferMapped))
+		memcpy(vertexConstBufferMapped.pData, &basicTransformConstants, sizeof(ShaderTransformConstants_GeneralComplete));
+		context->m_mainContext->Unmap(transformConstantBuffer.Get(), 0);
+	}
+
+}
 void Model::InitIndexBuffer(ComPtr< ID3D11Device> creationdevice,vector<unsigned>& indicies)
 {
 	m_indicies = indicies;
@@ -1731,7 +1745,7 @@ void Model::Draw(RenderContext* context, ComPtr<ID3D11Buffer> transformConstantB
 	{
 		context->m_mainContext->IASetIndexBuffer(GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
-
+	UpdateTransformConstants(context, transformConstantBuffer, basicTransformConstants,m_transform);
 	if (HasIndexBuffer())
 	{
 		context->m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);
