@@ -40,6 +40,6 @@ private:
 	ComPtr<ID3D11BlendState> m_blendState;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
-	SHADERTRANSFORMCONSTANTSSTRUCT m_VertexConstantBufferData;
+	SHADERTRANSFORMCONSTANTSSTRUCT m_TransformConstantBufferData;
 	ComPtr<ID3D11Buffer> m_transformConstantBuffer;
 };
