@@ -108,7 +108,15 @@ void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 		DXASSERT(device->CreateBuffer(&vsConstantBufferDesc, &vsConstantB8ufferSubresData, m_transformConstantBuffer.GetAddressOf()))
 	}
 
-	BasicModelManager_Old::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);
+	//test with cube model loading
+	//BasicModelManager_Old::LoadModel(device, "models/cubes2.dae", m_loadedcompoundmodel, VERTEXVERSION2);
+	//test with revolver model loading
+	 float scalefactorCompoundModel = 0.01f;
+	XMMATRIX scalematExtra = XMMatrixScalingFromVector(XMVectorSet(scalefactorCompoundModel, scalefactorCompoundModel, scalefactorCompoundModel, 1.0f));
+	BasicModelManager_Old::LoadModel(device, "models/revolver/scene.gltf", m_loadedcompoundmodel, VERTEXVERSION2, L"textures/modeltextures/revolver/", true);
+	//test sponza model loading
+	//BasicModelManager_Old::LoadModel(device, "models/Sponza.gltf", m_loadedcompoundmodel, VERTEXVERSION2, L"textures/modeltextures/sponza/", true);
+	m_loadedcompoundmodel.Extratransform(scalematExtra);
 	//create depth stencil resource and dsv
 	{
 		D3D11_TEXTURE2D_DESC depthStencilTexDesc = {};
