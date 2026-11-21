@@ -65,6 +65,8 @@ void ModelTestApplication::Render(RenderContext context)
 	//draw
 	//context.m_mainContext->PSSetConstantBuffers(0, 1, m_psConstantBuffer.GetAddressOf());
 	context.m_mainContext->VSSetConstantBuffers(0, 1, m_transformConstantBuffer.GetAddressOf());
+	//set sampler
+	context.m_mainContext->PSSetSamplers(0, 1, m_LinerSamplerState.GetAddressOf());
 	//add rendering logic for model
 	m_loadedcompoundmodel.Draw(&context, m_transformConstantBuffer, m_TransformConstantBufferData);
 	m_swapchain.Present();
@@ -72,6 +74,17 @@ void ModelTestApplication::Render(RenderContext context)
 
 void ModelTestApplication::InitExtras(ComPtr<ID3D11Device> device)
 {
+	//create sampler
+	D3D11_SAMPLER_DESC mainSamplerDesc = {};
+	mainSamplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	mainSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
+	mainSamplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+	mainSamplerDesc.MaxAnisotropy = 1;
+	mainSamplerDesc.MinLOD = 0.0f;
+	mainSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	DXASSERT(device->CreateSamplerState(&mainSamplerDesc, m_LinerSamplerState.GetAddressOf()))
 	//camera setup
 	{
 		DirectX::XMVECTOR camPos = DirectX::XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);

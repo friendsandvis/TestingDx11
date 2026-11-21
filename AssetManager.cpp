@@ -1769,6 +1769,22 @@ void Model::Draw(RenderContext* context, ComPtr<ID3D11Buffer> transformConstantB
 		context->m_mainContext->IASetIndexBuffer(GetIndexBuffer().GetDXBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
 	UpdateTransformConstants(context, transformConstantBuffer, basicTransformConstants,m_transform);
+	//set materiel textures
+	ComPtr<ID3D11ShaderResourceView> diffuseSRV =m_loadedmaterial.GetDiffuseSRV();
+	ComPtr<ID3D11ShaderResourceView> normalSRV = m_loadedmaterial.GetNormalSRV();
+	ComPtr<ID3D11ShaderResourceView> roughnessSRV = m_loadedmaterial.GetRoughnessSRV();
+	if (m_loadedmaterial.IsDiffuseTextureDataLoaded())
+	{
+		context->m_mainContext->PSSetShaderResources(0, 1, diffuseSRV.GetAddressOf());
+	}
+	if (m_loadedmaterial.IsNormalTextureDataLoaded())
+	{
+		context->m_mainContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
+	}
+	if (m_loadedmaterial.IsRoughnessTextureDataLoaded())
+	{
+		context->m_mainContext->PSSetShaderResources(2, 1, roughnessSRV.GetAddressOf());
+	}
 	if (HasIndexBuffer())
 	{
 		context->m_mainContext->DrawIndexed(GetIndiciesCount(), 0, 0);

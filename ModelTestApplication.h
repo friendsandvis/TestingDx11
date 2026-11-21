@@ -42,4 +42,5 @@ private:
 	ComPtr<ID3D11Texture2D> m_depthStencilTex;
 	SHADERTRANSFORMCONSTANTSSTRUCT m_TransformConstantBufferData;
 	ComPtr<ID3D11Buffer> m_transformConstantBuffer;
+	ComPtr<ID3D11SamplerState> m_LinerSamplerState;
 };

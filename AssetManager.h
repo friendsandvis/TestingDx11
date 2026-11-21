@@ -82,6 +82,12 @@ public:
 	DXTexture* GetNormalTexture() { return m_normaltexture; }
 	DXTexture* GetRoughnessTexture() { return m_roughnesstexture; }
 	DXTexture* GetMetalnessTexture() { return m_metalnesstexture; }
+	ComPtr<ID3D11ShaderResourceView> GetDiffuseSRV() { return m_diffuseSRV; }
+	ComPtr<ID3D11ShaderResourceView> GetNormalSRV() { return m_normalSRV; }
+	ComPtr<ID3D11ShaderResourceView> GetRoughnessSRV() { return m_roughnessSRV; }
+	bool IsDiffuseTextureDataLoaded() { return m_diffusetextureDataLoaded; }
+	bool IsNormalTextureDataLoaded() { return m_normaltextureDataLoaded; }
+	bool IsRoughnessTextureDataLoaded() { return m_roughnesstextureDataLoaded; }
 	void LoadTextureData(DXTexture* texptr);
 private:
 
