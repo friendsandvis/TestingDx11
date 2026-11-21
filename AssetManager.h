@@ -75,6 +75,7 @@ public:
 	wstring GetTexPath() { return m_texfilepath; }
 	void ContainCombinedMetalnessRoughnessTex(bool ContaincombinedMetalnessRoughnessTex) { m_Containscombinedroughnessmetalnesstexture = ContaincombinedMetalnessRoughnessTex; }
 	bool ContainCombinedMetalnessRoughnessTex() { return m_Containscombinedroughnessmetalnesstexture; }
+	void CreateSRV(ComPtr< ID3D11Device> creationdevice);
 	ModelMaterial();
 	~ModelMaterial();
 	DXTexture* GetDiffuseTexture() { return m_diffusetexture; }
@@ -99,6 +100,9 @@ private:
 	bool m_roughnesstextureDataLoaded;
 	bool m_metalnesstextureDataLoaded;
 	bool m_Containscombinedroughnessmetalnesstexture = false;
+	ComPtr<ID3D11ShaderResourceView> m_diffuseSRV;
+	ComPtr<ID3D11ShaderResourceView> m_normalSRV;
+	ComPtr<ID3D11ShaderResourceView> m_roughnessSRV;
 
 };
 //hold texture index for each material texture srv parameter in srvheap(pbr material only for now)

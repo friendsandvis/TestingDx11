@@ -660,7 +660,8 @@ void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepa
 		std::string texfilename = *(texnames.begin());
 		wstring texfilenamewstr(texfilename.begin(), texfilename.end());
 
-
+		DXTexture* difuseTexture = m_loadedmaterial.GetDiffuseTexture();
+		
 		m_loadedmaterial.LoadDifuseTexture(texfilenamewstr);
 	}
 	}
@@ -674,6 +675,7 @@ void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepa
 
 
 			m_loadedmaterial.LoadNormalTexture(texfilenamewstr);
+			DXTexture* normalTexture = m_loadedmaterial.GetNormalTexture();
 		}
 	}
 	//roughness texture load
@@ -686,6 +688,7 @@ void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepa
 
 
 			m_loadedmaterial.LoadRoughnessTexture(texfilenamewstr);
+			DXTexture* roughnessTexture = m_loadedmaterial.GetRoughnessTexture();
 		}
 	}
 	//metalness texture load
@@ -710,7 +713,7 @@ void Model::InitMaterial(ComPtr< ID3D11Device> creationdevice, wstring texfilepa
 			}
 		}
 	}
-		m_loadedmaterial.Init(creationdevice,false);
+		m_loadedmaterial.Init(creationdevice,true);
 }
 void Model::GetMaterialTextures(vector< DXTexture*>& textures)
 {
@@ -1570,8 +1573,8 @@ void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloadi
 		{
 			LoadTextureDataInternal(m_diffusetexture);
 			m_diffusetextureDataLoaded = true;
+			m_diffusetexture->Init(device);
 		}
-		//m_diffusetexture->Init(creationdevice);
 		
 		//m_diffusetexture->SetName(L"diffusetexture_modelmaterial");
 	}
@@ -1581,6 +1584,7 @@ void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloadi
 		{
 			LoadTextureDataInternal(m_normaltexture);
 			m_normaltextureDataLoaded = true;
+			m_normaltexture->Init(device);
 		}
 		//m_normaltexture->Init(creationdevice);
 		//m_diffusetexture->SetName(L"normaltexture_modelmaterial");
@@ -1591,6 +1595,7 @@ void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloadi
 		{
 			LoadTextureDataInternal(m_roughnesstexture);
 			m_roughnesstextureDataLoaded = true;
+			m_roughnesstexture->Init(device);
 		}
 		//m_roughnesstexture->Init(creationdevice);
 		//m_roughnesstexture->SetName(L"roughnesstexture_modelmaterial");
@@ -1601,10 +1606,12 @@ void ModelMaterial::Init(ComPtr<ID3D11Device> device, bool allowTextureDataloadi
 		{
 			LoadTextureDataInternal(m_metalnesstexture);
 			m_metalnesstextureDataLoaded = true;
+			m_metalnesstexture->Init(device);
 		}
 		//m_metalnesstexture->Init(creationdevice);
 		//m_metalnesstexture->SetName(L"metalnesstexture_modelmaterial");
 	}
+	CreateSRV(device);
 }
 void ModelMaterial::GetMaterialTextures(vector< DXTexture*>& textures)
 {
@@ -1696,6 +1703,22 @@ void ModelMaterial::LoadTextureData(DXTexture* texptr)
 	else if (texptr == m_metalnesstexture)
 	{
 		m_metalnesstextureDataLoaded = true;
+	}
+}
+
+void ModelMaterial::CreateSRV(ComPtr< ID3D11Device> creationdevice)
+{
+	if (m_diffusetexture)
+	{
+		m_diffusetexture->CreateSRV(creationdevice,m_diffuseSRV);
+	}
+	if (m_normaltexture)
+	{
+		m_normaltexture->CreateSRV(creationdevice, m_normalSRV);
+	}
+	if (m_roughnesstexture)
+	{
+		m_roughnesstexture->CreateSRV(creationdevice, m_roughnessSRV);
 	}
 }
 
